@@ -130,10 +130,13 @@
   .hero-sub{color:var(--muted);font-size:16px;max-width:520px;margin:0 auto 30px;}
   .cta-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--mag),var(--red));color:#fff;border:none;font-family:var(--display);font-weight:700;font-size:15px;padding:16px 30px;border-radius:999px;cursor:pointer;box-shadow:0 8px 40px -6px rgba(224,73,159,.55), 0 8px 40px -6px rgba(242,80,61,.4);animation:ctaPulse 2.4s ease-in-out infinite;}
   .cta-btn:hover{animation-play-state:paused;}
+  .cta-btn:disabled{opacity:.4;cursor:not-allowed;animation:none;box-shadow:none;}
   @keyframes ctaPulse{
     0%,100%{box-shadow:0 8px 40px -6px rgba(224,73,159,.55), 0 8px 40px -6px rgba(242,80,61,.4);transform:scale(1);}
     50%{box-shadow:0 10px 60px -4px rgba(224,73,159,.85), 0 10px 60px -4px rgba(242,80,61,.7);transform:scale(1.035);}
   }
+  .seats-info{color:var(--muted);font-size:12.5px;font-family:var(--mono);letter-spacing:.02em;margin:12px 0 0;}
+  .seats-info.is-full{color:var(--red);font-weight:700;}
   .proof-text{color:var(--muted);font-size:13px;margin-top:14px;}
   .proof-text b{color:var(--text);}
 
@@ -212,6 +215,7 @@
     <h1 class="headline reveal d3">FestX &amp; MDM Are <span class="hl-red">Opening The Room</span> — See The Full Collaboration <span class="hl-mag">Live</span></h1>
     <p class="hero-sub reveal d4">A free live session for traders and brand partners who want first access to the FestX × MDM collaboration — how it works, who qualifies, and how to position your brand before the doors close.</p>
     <button class="cta-btn reveal d5" id="openRegisterHero">Save My Free Spot →</button>
+    <p class="seats-info reveal d5" id="seatsInfoHero">Checking availability…</p>
     <p class="proof-text reveal d5">Join <b>1,200+</b> traders &amp; partners</p>
 
     <div class="trust-box reveal d6">
@@ -239,6 +243,7 @@
     <h2 class="reveal">Claim Your Spot</h2>
     <p class="reveal">Seats are limited — save yours before the doors close.</p>
     <button class="cta-btn reveal" id="openRegisterFinal">Save My Free Spot →</button>
+    <p class="seats-info reveal" id="seatsInfoFinal">Checking availability…</p>
   </div>
 </section>
 
@@ -310,10 +315,32 @@
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal:not(.hero .reveal)').forEach(el => io.observe(el));
 
+  const CAPACITY = 1000;
+  const ctaButtons = [document.getElementById('openRegisterHero'), document.getElementById('openRegisterFinal')];
+  const seatsInfoEls = [document.getElementById('seatsInfoHero'), document.getElementById('seatsInfoFinal')];
+
+  function renderSeats(remaining){
+    const full = remaining <= 0;
+    const text = full ? 'No more space' : `${remaining} of ${CAPACITY} spots left`;
+    seatsInfoEls.forEach(el => { if (el) { el.textContent = text; el.classList.toggle('is-full', full); } });
+    ctaButtons.forEach(btn => { if (btn) btn.disabled = full; });
+  }
+
+  async function loadSeats(){
+    try {
+      const resp = await fetch('/api/seats');
+      const data = await resp.json();
+      if (!resp.ok) throw new Error('failed');
+      renderSeats(data.remaining);
+    } catch (e) {
+      seatsInfoEls.forEach(el => { if (el) el.textContent = ''; });
+    }
+  }
+  loadSeats();
+
   const registerOverlay = document.getElementById('registerOverlay');
   const thanksOverlay = document.getElementById('thanksOverlay');
-  document.getElementById('openRegisterHero').addEventListener('click', () => registerOverlay.classList.add('open'));
-  document.getElementById('openRegisterFinal').addEventListener('click', () => registerOverlay.classList.add('open'));
+  ctaButtons.forEach(btn => btn && btn.addEventListener('click', () => registerOverlay.classList.add('open')));
   document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => {
     registerOverlay.classList.remove('open');
     thanksOverlay.classList.remove('open');
@@ -347,6 +374,7 @@
       registerOverlay.classList.remove('open');
       thanksOverlay.classList.add('open');
       registerForm.reset();
+      loadSeats();
     } catch (err) {
       alert('Network error — please check your connection and try again.');
     } finally {
