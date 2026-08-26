@@ -1,19 +1,18 @@
+const ADMIN_PASSWORD = 'FounderPartner@MestX.2026';
+
 module.exports = async function handler(req, res) {
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 
   if (!SUPABASE_URL || !SERVICE_KEY) {
     console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars');
     return res.status(500).json({ error: 'Server is not configured' });
   }
 
-  if (ADMIN_TOKEN) {
-    const auth = req.headers.authorization || '';
-    const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
-    if (token !== ADMIN_TOKEN) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  if (token !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const base = SUPABASE_URL.replace(/\/$/, '');

@@ -238,8 +238,8 @@
   updateCountdown();
   setInterval(updateCountdown, 30000);
 
-  function getAdminToken(){ return localStorage.getItem('festx_admin_token') || ''; }
-  function setAdminToken(t){ localStorage.setItem('festx_admin_token', t); }
+  function getAdminToken(){ return localStorage.getItem('festx_admin_pass') || ''; }
+  function setAdminToken(t){ localStorage.setItem('festx_admin_pass', t); }
 
   async function apiFetch(url, opts){
     opts = opts || {};
@@ -248,11 +248,13 @@
     if (token) opts.headers['Authorization'] = 'Bearer ' + token;
     let resp = await fetch(url, opts);
     if (resp.status === 401) {
-      const entered = prompt('Enter admin access token:');
+      const entered = prompt('Enter admin password:');
       if (entered) {
         setAdminToken(entered);
         opts.headers['Authorization'] = 'Bearer ' + entered;
         resp = await fetch(url, opts);
+      } else {
+        showToast('Password required to view registrants');
       }
     }
     return resp;
