@@ -1,0 +1,7 @@
+{
+  "name": "festx-x-mdm",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}

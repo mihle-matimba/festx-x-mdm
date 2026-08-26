@@ -318,21 +318,41 @@
     registerOverlay.classList.remove('open');
     thanksOverlay.classList.remove('open');
   }));
-  function makeTicketId(){
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let id = 'FXM-';
-    for (let i = 0; i < 6; i++) id += chars[Math.floor(Math.random() * chars.length)];
-    return id;
-  }
-  document.getElementById('registerForm').addEventListener('submit', (e) => {
+  const registerForm = document.getElementById('registerForm');
+  const submitBtn = registerForm.querySelector('.modal-submit');
+  registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('regName').value.trim() || 'Guest';
+    const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
-    document.getElementById('ticketName').textContent = name;
-    document.getElementById('ticketEmail').textContent = email || 'your inbox';
-    document.getElementById('ticketId').textContent = makeTicketId();
-    registerOverlay.classList.remove('open');
-    thanksOverlay.classList.add('open');
+    const phone = document.getElementById('regPhone').value.trim();
+
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Reserving…';
+
+    try {
+      const resp = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name: name, email, phone, attendance_mode: 'live' }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        alert(data.error || 'Something went wrong. Please try again.');
+        return;
+      }
+      document.getElementById('ticketName').textContent = data.full_name || name || 'Guest';
+      document.getElementById('ticketEmail').textContent = data.email || email || 'your inbox';
+      document.getElementById('ticketId').textContent = data.ticket_id;
+      registerOverlay.classList.remove('open');
+      thanksOverlay.classList.add('open');
+      registerForm.reset();
+    } catch (err) {
+      alert('Network error — please check your connection and try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+    }
   });
   [registerOverlay, thanksOverlay].forEach(ov => ov.addEventListener('click', (e) => {
     if (e.target === ov) ov.classList.remove('open');
