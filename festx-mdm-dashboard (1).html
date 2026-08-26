@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FestX × MDM — Registration Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#030303; --panel:#0d0b0c; --panel-2:#131011; --line:rgba(255,255,255,.1); --line-soft:rgba(255,255,255,.06);
+    --red:#f2503d; --red-2:#c73824;
+    --mag:#e0499f; --mag-2:#a3327c;
+    --green:#3ddc84;
+    --text:#f6f3f2; --muted:#a39a97; --muted-2:#6f6664;
+    --display:'Manrope',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  ::selection{background:rgba(224,73,159,.35);}
+  body{
+    margin:0;color:var(--text);font-family:var(--display);line-height:1.5;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(ellipse 900px 600px at 6% -8%, rgba(224,73,159,.28), transparent 55%),
+      radial-gradient(ellipse 900px 600px at 100% 0%, rgba(242,80,61,.24), transparent 55%),
+      radial-gradient(ellipse 1000px 900px at 50% 115%, rgba(224,73,159,.14), transparent 60%),
+      var(--bg);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding:28px 22px 60px;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  /* ---- top bar ---- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:26px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand img{height:30px;width:auto;display:block;}
+  .brand .x{color:var(--muted-2);font-family:var(--mono);font-size:15px;}
+  .brand-title{margin-left:8px;padding-left:16px;border-left:1px solid var(--line);}
+  .brand-title h1{margin:0;font-size:15px;font-weight:700;letter-spacing:-0.01em;}
+  .brand-title span{display:block;font-size:11.5px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em;margin-top:1px;}
+
+  .live-pill{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);padding:9px 15px 9px 13px;border-radius:999px;}
+  .live-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 10px 2px var(--red);animation:pulseDot 1.8s ease-in-out infinite;}
+  @keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .live-pill b{color:var(--text);font-weight:700;}
+  .live-pill .ctd{color:var(--mag);font-weight:700;}
+
+  /* ---- stat cards ---- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+  @media (max-width:900px){.stats{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:520px){.stats{grid-template-columns:1fr;}}
+  .stat{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden;}
+  .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--mag),var(--red));opacity:.7;}
+  .stat .label{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .stat .value{font-size:28px;font-weight:800;letter-spacing:-0.01em;line-height:1;}
+  .stat .value small{font-size:14px;color:var(--muted);font-weight:600;}
+  .stat .sub{margin-top:8px;font-size:12px;color:var(--muted);}
+  .stat .sub.up{color:var(--green);}
+
+  .capacity-wrap{margin-top:12px;}
+  .capacity-bar{height:7px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;}
+  .capacity-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--mag),var(--red));transition:width .5s cubic-bezier(.22,1,.36,1);}
+
+  /* ---- panel ---- */
+  .panel{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:20px 22px;border-bottom:1px solid var(--line);}
+  .panel-head h2{margin:0;font-size:16px;font-weight:700;}
+  .panel-head .count{font-family:var(--mono);color:var(--muted);font-size:12.5px;margin-left:8px;font-weight:500;}
+  .panel-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+  .btn{font-family:var(--display);font-weight:700;font-size:12.5px;border-radius:9px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);display:inline-flex;align-items:center;gap:6px;transition:background .15s ease, border-color .15s ease;}
+  .btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2);}
+  .btn-primary{background:linear-gradient(135deg,var(--mag),var(--red));border:none;box-shadow:0 6px 24px -6px rgba(224,73,159,.5);}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost{color:var(--muted);}
+  .btn-danger:hover{border-color:rgba(242,80,61,.5);color:var(--red);}
+
+  .toolbar{display:flex;gap:10px;padding:14px 22px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;}
+  .search{flex:1;min-width:180px;position:relative;}
+  .search input{width:100%;background:#000;border:1px solid var(--line);color:var(--text);padding:10px 14px 10px 34px;border-radius:9px;font-family:var(--display);font-size:13px;}
+  .search input:focus{outline:none;border-color:var(--mag);}
+  .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.5;}
+  .filter-select{background:#000;border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-family:var(--display);font-size:13px;}
+
+  /* ---- table ---- */
+  table{width:100%;border-collapse:collapse;}
+  thead th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:12px 22px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:13px 22px;border-bottom:1px solid var(--line-soft);font-size:13.5px;vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(255,255,255,.02);}
+  .cell-name{font-weight:700;}
+  .cell-email,.cell-phone{color:var(--muted);font-family:var(--mono);font-size:12.5px;}
+  .cell-id{font-family:var(--mono);font-size:12px;color:var(--mag);letter-spacing:.02em;}
+  .cell-time{color:var(--muted);font-size:12px;font-family:var(--mono);white-space:nowrap;}
+  .tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid;}
+  .tag-live{color:var(--green);border-color:rgba(61,220,132,.35);background:rgba(61,220,132,.08);}
+  .tag-replay{color:var(--muted);border-color:var(--line);background:rgba(255,255,255,.03);}
+  .row-del{background:none;border:none;color:var(--muted-2);cursor:pointer;padding:6px;border-radius:6px;line-height:1;}
+  .row-del:hover{color:var(--red);background:rgba(242,80,61,.1);}
+
+  .empty{padding:60px 30px;text-align:center;}
+  .empty .icon{width:52px;height:52px;margin:0 auto 16px;border-radius:14px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.02);}
+  .empty h3{margin:0 0 6px;font-size:15.5px;}
+  .empty p{margin:0 0 18px;color:var(--muted);font-size:13px;max-width:340px;margin-left:auto;margin-right:auto;}
+
+  /* ---- modal ---- */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .overlay.open{display:flex;}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;max-width:400px;width:100%;position:relative;}
+  .modal h3{margin:0 0 6px;font-size:18px;}
+  .modal p{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .modal label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;}
+  .modal input,.modal select{width:100%;background:#000;border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;margin-bottom:14px;font-family:var(--display);font-size:13.5px;}
+  .modal input:focus,.modal select:focus{outline:none;border-color:var(--mag);}
+  .modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
+  .modal-submit{width:100%;background:linear-gradient(135deg,var(--mag),var(--red));color:#fff;border:none;font-weight:700;padding:12px;border-radius:9px;cursor:pointer;font-size:13.5px;box-shadow:0 8px 26px -6px rgba(224,73,159,.45);}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 12px 40px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;z-index:80;display:flex;align-items:center;gap:8px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+
+  .foot-note{text-align:center;color:var(--muted-2);font-size:11.5px;margin-top:22px;font-family:var(--mono);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <img src="https://ffxlryusmstnfjedleds.supabase.co/storage/v1/object/public/Assets/festxlogocolour.png" alt="FestX">
+      <span class="x">×</span>
+      <img src="https://yscggkgvxfjvfmnulrcy.supabase.co/storage/v1/object/public/Media/MDM%20loogo-06.png" alt="MDM">
+      <div class="brand-title">
+        <h1>Registration Dashboard</h1>
+        <span>FestX × MDM Live Session</span>
+      </div>
+    </div>
+    <div class="live-pill"><span class="dot"></span> Thurs 27 Aug · 20:00 GMT+2 — <span class="ctd" id="countdown">—</span></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Total Registered</div>
+      <div class="value" id="statTotal">0</div>
+      <div class="sub" id="statTotalSub">No sign-ups yet</div>
+    </div>
+    <div class="stat">
+      <div class="label">Seats Remaining</div>
+      <div class="value" id="statSeats">— <small>/ —</small></div>
+      <div class="capacity-wrap">
+        <div class="capacity-bar"><div class="capacity-fill" id="capFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="label">Reminder Email</div>
+      <div class="value" style="font-size:20px;">18:00 <small>GMT+2</small></div>
+      <div class="sub">Sent 2 hrs before doors open</div>
+    </div>
+    <div class="stat">
+      <div class="label">Last Sign-up</div>
+      <div class="value" style="font-size:18px;" id="statLast">—</div>
+      <div class="sub" id="statLastSub">Waiting on your first registrant</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2>Registrants<span class="count" id="tableCount">(0)</span></h2></div>
+      <div class="panel-actions">
+        <button class="btn btn-primary" id="exportBtn">Export CSV</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#a39a97" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="#a39a97" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name or email…">
+      </div>
+      <select class="filter-select" id="filterSelect">
+        <option value="all">All attendees</option>
+        <option value="live">Live only</option>
+        <option value="replay">Replay only</option>
+      </select>
+    </div>
+    <div id="tableWrap"></div>
+  </div>
+
+  <div class="foot-note">Data stored locally to this dashboard · FestX × MDM</div>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg">Saved</span></div>
+
+<script>
+(function(){
+  const STORE_KEY = 'registrations';
+  const EVENT_TIME = new Date('2026-08-27T20:00:00+02:00');
+  const CAPACITY = 1000;
+  let registrants = [];
+
+  const els = {
+    total: document.getElementById('statTotal'),
+    totalSub: document.getElementById('statTotalSub'),
+    seats: document.getElementById('statSeats'),
+    capFill: document.getElementById('capFill'),
+    last: document.getElementById('statLast'),
+    lastSub: document.getElementById('statLastSub'),
+    tableWrap: document.getElementById('tableWrap'),
+    tableCount: document.getElementById('tableCount'),
+    search: document.getElementById('searchInput'),
+    filter: document.getElementById('filterSelect'),
+    countdown: document.getElementById('countdown'),
+    toast: document.getElementById('toast'),
+    toastMsg: document.getElementById('toastMsg'),
+  };
+
+  function showToast(msg){
+    els.toastMsg.textContent = msg;
+    els.toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => els.toast.classList.remove('show'), 2200);
+  }
+
+  function fmtTime(iso){
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function updateCountdown(){
+    const now = new Date();
+    let diff = EVENT_TIME - now;
+    if (diff <= 0) { els.countdown.textContent = 'Live now'; return; }
+    const d = Math.floor(diff / 86400000); diff -= d*86400000;
+    const h = Math.floor(diff / 3600000); diff -= h*3600000;
+    const m = Math.floor(diff / 60000);
+    els.countdown.textContent = d > 0 ? `${d}d ${h}h ${m}m to go` : `${h}h ${m}m to go`;
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 30000);
+
+  async function load(){
+    try {
+      const listRes = await window.storage.list(STORE_KEY + ':', true);
+      const keys = (listRes && listRes.keys) || [];
+      const items = [];
+      for (const k of keys) {
+        try {
+          const r = await window.storage.get(k, true);
+          if (r && r.value) items.push(JSON.parse(r.value));
+        } catch(e){}
+      }
+      items.sort((a,b) => new Date(b.registeredAt) - new Date(a.registeredAt));
+      registrants = items;
+    } catch(e) { registrants = []; }
+    render();
+  }
+
+  async function remove(id){
+    await window.storage.delete(STORE_KEY + ':' + id, true);
+  }
+
+  function render(){
+    const q = els.search.value.trim().toLowerCase();
+    const f = els.filter.value;
+    let rows = registrants.filter(r => {
+      const matchesQ = !q || r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q);
+      const matchesF = f === 'all' || r.mode === f;
+      return matchesQ && matchesF;
+    });
+
+    els.total.textContent = registrants.length;
+    els.totalSub.textContent = registrants.length === 0 ? 'No sign-ups yet' : `${registrants.filter(r=>r.mode==='live').length} planning to join live`;
+
+    const remaining = Math.max(CAPACITY - registrants.length, 0);
+    els.seats.innerHTML = `${remaining} <small>/ ${CAPACITY}</small>`;
+    const pct = Math.min((registrants.length / CAPACITY) * 100, 100);
+    els.capFill.style.width = pct + '%';
+
+    if (registrants.length) {
+      const latest = registrants[0];
+      els.last.textContent = latest.name;
+      els.lastSub.textContent = fmtTime(latest.registeredAt);
+    } else {
+      els.last.textContent = '—';
+      els.lastSub.textContent = 'Waiting on your first registrant';
+    }
+
+    els.tableCount.textContent = `(${rows.length})`;
+
+    if (registrants.length === 0) {
+      els.tableWrap.innerHTML = `
+        <div class="empty">
+          <div class="icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7l8 5 8-5M4 7v10a1 1 0 001 1h14a1 1 0 001-1V7M4 7a1 1 0 011-1h14a1 1 0 011 1" stroke="#a39a97" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>No registrants yet</h3>
+          <p>Sign-ups from the funnel page will land here, or add one manually to get started.</p>
+        </div>`;
+      return;
+    }
+
+    if (rows.length === 0) {
+      els.tableWrap.innerHTML = `<div class="empty"><h3>No matches</h3><p>Try a different search or filter.</p></div>`;
+      return;
+    }
+
+    const rowsHtml = rows.map(r => `
+      <tr>
+        <td class="cell-name">${escapeHtml(r.name)}</td>
+        <td class="cell-email">${escapeHtml(r.email)}</td>
+        <td class="cell-phone">${escapeHtml(r.phone || '—')}</td>
+        <td><span class="tag ${r.mode === 'live' ? 'tag-live' : 'tag-replay'}">${r.mode === 'live' ? 'Live' : 'Replay'}</span></td>
+        <td class="cell-id">${escapeHtml(r.ticketId)}</td>
+        <td class="cell-time">${fmtTime(r.registeredAt)}</td>
+        <td><button class="row-del" data-id="${r.id}" title="Remove">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button></td>
+      </tr>`).join('');
+
+    els.tableWrap.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Name</th><th>Email</th><th>Phone</th><th>Attendance</th><th>Ticket ID</th><th>Registered</th><th></th>
+        </tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>`;
+
+    els.tableWrap.querySelectorAll('.row-del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        registrants = registrants.filter(r => r.id !== id);
+        render();
+        await remove(id);
+        showToast('Registrant removed');
+      });
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  els.search.addEventListener('input', render);
+  els.filter.addEventListener('change', render);
+
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    if (!registrants.length) { showToast('Nothing to export yet'); return; }
+    const header = ['Name','Email','Phone','Attendance','Ticket ID','Registered At'];
+    const lines = [header.join(',')].concat(registrants.map(r => [r.name, r.email, r.phone, r.mode, r.ticketId, r.registeredAt].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')));
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'festx-mdm-registrants.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
