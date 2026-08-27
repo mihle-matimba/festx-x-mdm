@@ -371,7 +371,10 @@
 
   document.getElementById('exportBtn').addEventListener('click', () => {
     if (!registrants.length) { showToast('Nothing to export yet'); return; }
-    const esc = v => `"${String(v || '').replace(/"/g, '""')}"`;
+    const esc = v => {
+      const s = String(v || '');
+      return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
     const lines = registrants.map(r => {
       const name = String(r.name || '').trim();
       const spaceIdx = name.indexOf(' ');
@@ -379,7 +382,7 @@
       const lastName = spaceIdx === -1 ? '' : name.slice(spaceIdx + 1);
       return [r.email, firstName, lastName].map(esc).join(',');
     });
-    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = 'zoom-registrants.csv';
