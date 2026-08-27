@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FestX × MDM — Business Collaboration Session</title>
+<title>FestX × MDM — Two Platforms, One Collaboration</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,22 +21,24 @@
   *{box-sizing:border-box;}
   body{
     margin:0;color:var(--text);font-family:var(--display);line-height:1.55;-webkit-font-smoothing:antialiased;
+    /* Page glow follows the split: FestX crimson down the left, MDM violet
+       down the right, so the whole page carries the header's division. */
     background:
-      radial-gradient(ellipse 1100px 800px at 8% -5%, rgba(224,73,159,.55), transparent 52%),
-      radial-gradient(ellipse 1100px 800px at 95% 10%, rgba(242,80,61,.55), transparent 52%),
-      radial-gradient(ellipse 900px 700px at 15% 60%, rgba(224,73,159,.35), transparent 55%),
-      radial-gradient(ellipse 900px 700px at 90% 75%, rgba(242,80,61,.4), transparent 55%),
-      radial-gradient(ellipse 1000px 900px at 50% 105%, rgba(224,73,159,.3), transparent 60%),
+      radial-gradient(ellipse 1100px 800px at 8% -5%, rgba(242,80,61,.52), transparent 52%),
+      radial-gradient(ellipse 1100px 800px at 95% 10%, rgba(126,86,180,.58), transparent 52%),
+      radial-gradient(ellipse 900px 700px at 15% 60%, rgba(242,80,61,.34), transparent 55%),
+      radial-gradient(ellipse 900px 700px at 90% 75%, rgba(126,86,180,.46), transparent 55%),
+      radial-gradient(ellipse 1000px 900px at 50% 105%, rgba(150,90,150,.26), transparent 60%),
       var(--bg);
     background-attachment:fixed;
   }
   @media (max-width:640px){
     body{
       background:
-        radial-gradient(ellipse 480px 320px at 0% 0%, rgba(224,73,159,.4), transparent 46%),
-        radial-gradient(ellipse 480px 320px at 100% 12%, rgba(242,80,61,.4), transparent 46%),
-        radial-gradient(ellipse 420px 300px at 100% 55%, rgba(242,80,61,.25), transparent 48%),
-        radial-gradient(ellipse 420px 300px at 0% 105%, rgba(224,73,159,.22), transparent 50%),
+        radial-gradient(ellipse 480px 320px at 0% 0%, rgba(242,80,61,.42), transparent 46%),
+        radial-gradient(ellipse 480px 320px at 100% 12%, rgba(126,86,180,.44), transparent 46%),
+        radial-gradient(ellipse 420px 300px at 100% 55%, rgba(126,86,180,.28), transparent 48%),
+        radial-gradient(ellipse 420px 300px at 0% 105%, rgba(242,80,61,.24), transparent 50%),
         var(--bg);
       background-attachment:scroll;
     }
@@ -117,6 +119,17 @@
   .split-half.fx .split-name{color:var(--red);}
   .split-half.mdm .split-name{color:#a98bdc;}
   .split-role{font-size:12.5px;color:var(--muted);max-width:230px;margin:0;line-height:1.45;}
+  /* One door per brand, sitting under each logo. */
+  .split-cta{
+    display:inline-flex;align-items:center;gap:8px;margin-top:6px;
+    padding:12px 26px;border-radius:999px;
+    font-weight:700;font-size:14px;text-decoration:none;color:#fff;
+    border:1px solid transparent;transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .split-cta.fx{background:linear-gradient(135deg,#f2503d,#c73824);box-shadow:0 8px 34px -8px rgba(242,80,61,.75);}
+  .split-cta.mdm{background:linear-gradient(135deg,#9a6ad6,#6d47a8);box-shadow:0 8px 34px -8px rgba(126,86,180,.8);}
+  .split-cta:hover{transform:translateY(-2px);}
+  .split-cta:focus-visible{outline:2px solid #fff;outline-offset:3px;}
 
   /* Centred over both panels — the collab statement sits at the seam. */
   /* Centred with flex, not translate — .reveal owns transform for its fade-in. */
@@ -160,19 +173,29 @@
     border:1px solid rgba(255,255,255,.07);
   }
   @media (max-width:640px){
-    .split-header{grid-template-columns:1fr;grid-template-rows:1fr auto 1fr;}
-    .split-half{padding:34px 24px;gap:14px;}
-    /* Stacked panels are only ~46vh tall — drop the descriptor to keep the
-       logo and the cutout from crowding each other. */
+    /* Stacked, a centred overlay lands exactly on the seam — on top of the
+       FestX button and the MDM logo. So on phones the banner comes out of the
+       overlay and sits in flow between the two halves instead. */
+    .split-header{grid-template-columns:1fr;grid-template-rows:none;min-height:0;}
+    .split-half{min-height:46vh;padding:26px 22px 24px;gap:12px;}
+    .split-half.fx{order:1;}
+    .split-banner{order:2;}
+    .split-half.mdm{order:3;padding-bottom:calc(24px + var(--bar-h));}
+    .split-mid{display:none;}
     .split-role{display:none;}
-    .split-mid{width:auto;height:52px;align-items:center;}
-    /* Stacked, the divider seam and the centred heading are the same spot —
-       the hairline stays, the badge would sit behind the text. */
-    .split-x{display:none;}
-    .split-banner h1{max-width:13ch;}
-    .split-mid::before{top:50%;bottom:auto;left:0;right:0;width:auto;height:1px;transform:translateY(-50%);
-      background:linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);}
-    .split-x{width:40px;height:40px;font-size:17px;}
+
+    .split-banner{
+      position:static;padding:30px 22px 30px;
+      border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+      background:linear-gradient(100deg, rgba(242,80,61,.16), rgba(126,86,180,.18));
+    }
+    .split-banner h1{max-width:none;font-size:clamp(26px,7.6vw,34px);text-shadow:0 2px 12px rgba(0,0,0,.75);}
+    .split-banner h1::before{display:none;}
+    .split-banner .badge{
+      margin-top:16px;padding:9px 14px;font-size:10px;letter-spacing:.05em;
+      white-space:normal;line-height:1.55;text-align:center;
+    }
+    .split-cta{padding:13px 26px;font-size:14px;margin-top:2px;}
   }
   /* Short/landscape viewports: keep both halves and the divider on screen. */
   @media (max-height:560px){
@@ -269,8 +292,6 @@
     0%,100%{box-shadow:0 8px 40px -6px rgba(224,73,159,.55), 0 8px 40px -6px rgba(242,80,61,.4);transform:scale(1);}
     50%{box-shadow:0 10px 60px -4px rgba(224,73,159,.85), 0 10px 60px -4px rgba(242,80,61,.7);transform:scale(1.035);}
   }
-  .seats-info{color:var(--muted);font-size:12.5px;font-family:var(--mono);letter-spacing:.02em;margin:12px 0 0;}
-  .seats-info.is-full{color:var(--red);font-weight:700;}
   .proof-text{color:var(--muted);font-size:13px;margin-top:14px;}
   .proof-text b{color:var(--text);}
 
@@ -282,6 +303,24 @@
   .sec-head{text-align:center;margin-bottom:26px;}
   .sec-head h2{font-size:24px;}
   .sec-head em{font-style:normal;color:var(--red);}
+
+  /* Tour announcement — stands in until the city list is confirmed. The
+     timeline styles below are kept for when the stops are known. */
+  .tour-tba{
+    max-width:560px;margin:0 auto;text-align:center;
+    border:1px solid var(--line);border-radius:16px;padding:30px 28px;
+    background:linear-gradient(160deg, rgba(242,80,61,.06), rgba(126,86,180,.07) 75%), var(--panel);
+  }
+  .tour-rail{
+    display:block;height:2px;border-radius:2px;margin:0 auto 20px;max-width:220px;
+    background:linear-gradient(90deg, rgba(242,80,61,.15), var(--red) 22%, #8a5cc4 70%, rgba(109,71,168,.15));
+  }
+  .tour-line{font-size:15.5px;color:var(--text);margin:0 0 8px;line-height:1.5;}
+  .tour-sub{font-size:13.5px;color:var(--muted);margin:0;}
+  .tour-sub a{text-decoration:none;font-weight:700;}
+  .tour-sub a.fx{color:var(--red);}
+  .tour-sub a.mdm{color:#b096e8;}
+  .tour-sub a:hover{text-decoration:underline;}
 
   /* ===== TIMELINE ===== */
   .wrap-wide{max-width:1360px;margin:0 auto;padding:0 28px;}
@@ -311,18 +350,86 @@
   }
   @media (max-width:520px){ .timeline{grid-template-columns:1fr;} }
 
-  /* ===== INLINE REGISTER FORM ===== */
-  .register-intro{text-align:center;color:var(--muted);font-size:14px;margin:-16px auto 22px;max-width:440px;}
-  .register-form{max-width:520px;margin:0 auto;}
-  .rf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  @media (max-width:520px){ .rf-row{grid-template-columns:1fr;gap:0;} }
-  .register-form input{
-    width:100%;background:#000;border:1px solid var(--line);color:var(--text);
-    padding:13px 15px;border-radius:10px;margin-bottom:12px;
-    font-family:var(--display);font-size:14px;
+  /* ===== HOW IT WORKS ===== */
+  .steps{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;
+    max-width:1080px;margin:0 auto;position:relative;
   }
-  .register-form input:focus{outline:none;border-color:rgba(242,80,61,.55);box-shadow:0 0 0 3px rgba(242,80,61,.16);}
-  .register-form .seats-info{text-align:center;margin-top:12px;}
+  /* Rail behind the cards — visible only in the gaps, so the three read as one
+     run from FestX red through to MDM violet. */
+  .steps::before{
+    content:'';position:absolute;left:0;right:0;top:67px;height:2px;border-radius:2px;z-index:0;
+    background:linear-gradient(90deg, var(--red), #c2564f 50%, #8a5cc4);
+  }
+  @media (max-width:760px){
+    .steps{grid-template-columns:1fr;gap:18px;}
+    .steps::before{display:none;}
+  }
+  .step{
+    position:relative;z-index:1;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    border:1px solid var(--line);border-radius:20px;padding:38px 30px 36px;
+    transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .step:hover{transform:translateY(-4px);}
+  .step-num{
+    display:flex;align-items:center;justify-content:center;
+    width:58px;height:58px;border-radius:50%;margin-bottom:24px;
+    background:var(--bg);border:2px solid;
+    font-family:var(--mono);font-size:17px;font-weight:700;
+  }
+  .step h3{font-size:19px;font-weight:800;margin:0 0 10px;letter-spacing:-0.01em;}
+  .step p{font-size:14.5px;color:var(--muted);margin:0;line-height:1.6;max-width:262px;}
+
+  .step.fx{background:linear-gradient(160deg, rgba(242,80,61,.10), transparent 68%), var(--panel);border-color:rgba(242,80,61,.22);}
+  .step.fx .step-num{border-color:var(--red);color:var(--red);box-shadow:0 0 26px rgba(242,80,61,.55);}
+  .step.fx:hover{border-color:rgba(242,80,61,.5);box-shadow:0 18px 46px -20px rgba(242,80,61,.7);}
+  /* Step 02 is the collab itself — so it's split down the middle, crimson
+     bleeding in from the FestX side and violet from the MDM side. */
+  .step.mid{
+    background:
+      linear-gradient(100deg, rgba(242,80,61,.20) 0%, rgba(242,80,61,.05) 42%, rgba(126,86,180,.06) 58%, rgba(126,86,180,.22) 100%),
+      var(--panel);
+    border-color:rgba(255,255,255,.16);
+  }
+  .step.mid .step-num{
+    border-color:transparent;color:#fff;
+    background:
+      linear-gradient(var(--bg),var(--bg)) padding-box,
+      linear-gradient(135deg, var(--red) 0%, #8a5cc4 100%) border-box;
+    box-shadow:-8px 0 26px -6px rgba(242,80,61,.55), 8px 0 26px -6px rgba(126,86,180,.6);
+  }
+  .step.mid:hover{
+    border-color:rgba(255,255,255,.3);
+    box-shadow:-10px 18px 46px -22px rgba(242,80,61,.7), 10px 18px 46px -22px rgba(126,86,180,.7);
+  }
+  .step.mdm{background:linear-gradient(160deg, rgba(126,86,180,.15), rgba(93,58,128,.03) 68%), #14121f;border-color:rgba(150,120,220,.24);}
+  .step.mdm .step-num{border-color:#8a5cc4;color:#b096e8;box-shadow:0 0 26px rgba(126,86,180,.6);}
+  .step.mdm:hover{border-color:rgba(150,120,220,.55);box-shadow:0 18px 46px -20px rgba(126,86,180,.65);}
+
+  /* ===== PLATFORM CARDS ===== */
+  .plat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px;max-width:1080px;margin:0 auto;}
+  @media (max-width:620px){ .plat-grid{grid-template-columns:1fr;gap:20px;} }
+  .plat-card{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:22px;
+    min-height:380px;padding:52px 44px;border:1px solid var(--line);border-radius:22px;text-decoration:none;color:inherit;
+    transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  @media (max-width:620px){ .plat-card{min-height:0;padding:40px 28px;gap:18px;} }
+  .plat-card.fx{background:linear-gradient(160deg, rgba(242,80,61,.10), rgba(242,80,61,.02) 70%), var(--panel);border-color:rgba(242,80,61,.22);}
+  .plat-card.mdm{background:linear-gradient(160deg, rgba(126,86,180,.16), rgba(93,58,128,.04) 70%), #14121f;border-color:rgba(150,120,220,.26);}
+  .plat-card:hover{transform:translateY(-4px);}
+  .plat-card.fx:hover{border-color:rgba(242,80,61,.5);box-shadow:0 16px 44px -18px rgba(242,80,61,.6);}
+  .plat-card.mdm:hover{border-color:rgba(150,120,220,.55);box-shadow:0 16px 44px -18px rgba(126,86,180,.65);}
+  .plat-card:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+  .plat-card img{height:clamp(64px,6vw,92px);width:auto;filter:drop-shadow(0 8px 26px rgba(0,0,0,.65));}
+  .plat-card p{font-size:16px;color:var(--muted);margin:0;line-height:1.6;max-width:360px;}
+  .plat-btn{
+    display:inline-block;padding:16px 36px;border-radius:999px;font-weight:700;font-size:16px;color:#fff;
+  }
+  .plat-card.fx .plat-btn{background:linear-gradient(135deg,#f2503d,#c73824);}
+  .plat-card.mdm .plat-btn{background:linear-gradient(135deg,#9a6ad6,#6d47a8);}
+  .plat-url{font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.04em;}
 
   .site-foot{padding:26px 0 calc(26px + var(--bar-h));border-top:1px solid var(--line);text-align:center;font-size:12px;color:var(--muted);}
 
@@ -337,40 +444,23 @@
   .float-cta-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;}
   .float-cta-copy{display:flex;flex-direction:column;gap:1px;text-align:left;min-width:0;}
   .float-cta-copy strong{font-size:14px;font-weight:700;}
-  .float-cta .seats-info{margin:0;font-size:11.5px;}
-  .float-cta .cta-btn{padding:13px 24px;font-size:14px;flex-shrink:0;}
+  .float-cta-copy span{font-size:11.5px;color:var(--muted);}
+  .float-cta-actions{display:flex;gap:10px;flex-shrink:0;}
+  .float-cta .cta-btn{
+    padding:12px 22px;font-size:14px;text-decoration:none;animation:none;
+    box-shadow:none;border-radius:999px;
+  }
+  .float-cta .cta-btn.fx{background:linear-gradient(135deg,#f2503d,#c73824);}
+  .float-cta .cta-btn.mdm{background:linear-gradient(135deg,#9a6ad6,#6d47a8);}
+  .float-cta .cta-btn:hover{transform:translateY(-1px);}
   @media (max-width:560px){
     .float-cta-copy strong{font-size:12.5px;}
-    .float-cta .seats-info{font-size:10.5px;}
-    .float-cta .cta-btn{padding:12px 16px;font-size:13px;}
+    .float-cta-copy span{font-size:10.5px;}
+    .float-cta-actions{gap:8px;}
+    .float-cta .cta-btn{padding:11px 14px;font-size:12.5px;}
   }
   @media (prefers-reduced-motion: reduce){ .float-cta{transition:none;} }
 
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
-  .overlay.open{display:flex;}
-  .modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px;max-width:400px;width:100%;position:relative;}
-  .modal h3{margin:0 0 6px;font-size:20px;}
-  .modal p{color:var(--muted);font-size:13.5px;margin:0 0 18px;}
-  .modal input{width:100%;background:#000;border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:10px;margin-bottom:12px;font-family:var(--display);font-size:14px;}
-  .modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
-  .modal-submit{width:100%;background:linear-gradient(135deg,var(--mag),var(--red));color:#fff;border:none;font-weight:700;padding:13px;border-radius:10px;cursor:pointer;font-size:14.5px;box-shadow:0 8px 30px -6px rgba(224,73,159,.5), 0 8px 30px -6px rgba(242,80,61,.35);}
-
-  /* ===== TICKET ===== */
-  .ticket-modal{max-width:420px;padding:0;overflow:hidden;background:var(--panel);}
-  .ticket-head{padding:26px 26px 20px;text-align:center;position:relative;}
-  .ticket-check{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--mag),var(--red));display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 30px -6px rgba(224,73,159,.5), 0 8px 30px -6px rgba(242,80,61,.35);}
-  .ticket-check svg{width:24px;height:24px;}
-  .ticket-head h3{font-size:19px;margin:0 0 6px;}
-  .ticket-head p{color:var(--muted);font-size:13px;margin:0;}
-  .ticket-stub{margin:0 22px;border:1px dashed var(--line);border-radius:14px;padding:18px 18px 16px;position:relative;background:rgba(255,255,255,.02);}
-  .ticket-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px;}
-  .ticket-row:last-child{border-bottom:none;}
-  .ticket-row span:first-child{color:var(--muted);}
-  .ticket-row span:last-child{color:var(--text);font-weight:600;text-align:right;}
-  .ticket-id{font-family:var(--mono);letter-spacing:.03em;color:var(--mag)!important;}
-  .ticket-notice{margin:16px 22px 0;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--muted);line-height:1.5;}
-  .ticket-notice b{color:var(--text);}
-  .ticket-foot{padding:20px 22px 26px;}
 </style>
 </head>
 <body class="door-intro-active">
@@ -393,6 +483,7 @@
     <img class="split-logo" src="https://ffxlryusmstnfjedleds.supabase.co/storage/v1/object/public/Assets/festxlogocolour.png" alt="FestX">
     <span class="split-name">FestX</span>
     <p class="split-role">The platform bringing the traders and the audience.</p>
+    <a class="split-cta fx" href="https://www.tradewithfestx.com/" target="_blank" rel="noopener">Enter FestX →</a>
   </div>
   <div class="split-mid reveal d2">
     <span class="split-x">
@@ -414,51 +505,78 @@
     <img class="split-logo" src="https://yscggkgvxfjvfmnulrcy.supabase.co/storage/v1/object/public/Media/MDM%20loogo-06.png" alt="MDM">
     <span class="split-name">MDM</span>
     <p class="split-role">The brand partner opening the room to its network.</p>
+    <a class="split-cta mdm" href="https://www.mdmtraders.com/" target="_blank" rel="noopener">Join MDM →</a>
   </div>
   <div class="split-banner reveal d3">
     <h1>The <span class="hl-red">col</span><span class="hl-blue">lab</span> the industry was waiting for!</h1>
-    <span class="badge"><span class="dot"></span> <b>LIVE</b> VIRTUAL EVENT &bull; Thurs 27th August, 20:00 GMT+2</span>
+    <span class="badge"><span class="dot"></span> <b>LIVE</b> NOW &bull; One login, both course libraries</span>
   </div>
 </header>
 
 <section class="sec">
-  <div class="wrap-wide">
-    <div class="sec-head reveal"><h2>All The <em>Details</em></h2></div>
-    <ol class="timeline">
-      <li class="tl-item fx reveal"><span class="tl-node"></span><div class="tl-card"><div class="num">WHAT</div><h3>The Full Reveal</h3><p>How FestX and MDM are joining forces — the offer, the mechanics, who it's for.</p></div></li>
-      <li class="tl-item fx reveal d1"><span class="tl-node"></span><div class="tl-card"><div class="num">WHEN</div><h3>Thurs 27th Aug, 20:00 GMT+2</h3><p>One live session. Replay sent to everyone registered.</p></div></li>
-      <li class="tl-item mdm reveal d2"><span class="tl-node"></span><div class="tl-card"><div class="num">WHERE</div><h3>Online, Anywhere</h3><p>Join from your laptop or phone — link sent after registration.</p></div></li>
-      <li class="tl-item mdm reveal d3"><span class="tl-node"></span><div class="tl-card"><div class="num">WHO</div><h3>Traders &amp; Partners</h3><p>Built for brands ready to move first on this collaboration.</p></div></li>
-    </ol>
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Coming To A <em>City Near You</em></h2></div>
+    <div class="tour-tba reveal">
+      <span class="tour-rail"></span>
+      <p class="tour-line">We're taking the collab on the road. Cities and dates are being locked in now.</p>
+      <p class="tour-sub">Follow <a class="fx" href="https://www.tradewithfestx.com/" target="_blank" rel="noopener">FestX</a> or <a class="mdm" href="https://www.mdmtraders.com/" target="_blank" rel="noopener">MDM</a> to hear it first.</p>
+    </div>
   </div>
 </section>
 
 <section class="hero">
   <div class="wrap">
-    <p class="hero-sub reveal">A free live session for traders and brand partners who want first access to the FestX × MDM collaboration — how it works, who qualifies, and how to position your brand before the doors close.</p>
-    <p class="proof-text reveal">Join <b>1,200+</b> traders &amp; partners</p>
+    <p class="hero-sub reveal">FestX and MDM have joined forces. Sign up on either side and you get the other one's course material with it — one login, both libraries. Pick the door that fits and start today.</p>
+    <p class="proof-text reveal">Trusted by <b>1,200+</b> traders &amp; partners</p>
 
     <div class="trust-box reveal">
-      <div class="trust-item"><strong>Free to attend</strong>Zero cost</div>
-      <div class="trust-item"><strong>Seats limited</strong>Few spots left</div>
-      <div class="trust-item"><strong>Replay available</strong>Can't make it live? We got you</div>
+      <div class="trust-item"><strong>One login</strong>Both course libraries</div>
+      <div class="trust-item"><strong>Open now</strong>Sign up in minutes</div>
+      <div class="trust-item"><strong>On tour</strong>Cities announced soon</div>
     </div>
   </div>
 </section>
 
-<section class="sec register-sec" id="register">
-  <div class="wrap">
-    <div class="sec-head reveal"><h2>Save Your <em>Free Spot</em></h2></div>
-    <p class="register-intro reveal">Enter your details — we'll send you the link and a reminder before we go live.</p>
-    <form id="registerForm" class="register-form reveal">
-      <div class="rf-row">
-        <input type="text" id="regName" placeholder="Full name" required>
-        <input type="email" id="regEmail" placeholder="Email address" required>
+<section class="sec" id="how">
+  <div class="wrap-wide">
+    <div class="sec-head reveal"><h2>How The <em>Collab</em> Works</h2></div>
+    <div class="steps">
+      <div class="step fx reveal">
+        <div class="step-num">01</div>
+        <h3>Log in your side</h3>
+        <p>Sign up with FestX or MDM — whichever one you came here for.</p>
       </div>
-      <input type="tel" id="regPhone" placeholder="Phone number" required>
-      <button type="submit" class="modal-submit">Reserve My Seat →</button>
-      <p class="seats-info" id="seatsInfoForm"></p>
-    </form>
+      <div class="step mid reveal d1">
+        <div class="step-num">02</div>
+        <h3>Get both libraries</h3>
+        <p>Your login also opens the other side's course material. That's the collab.</p>
+      </div>
+      <div class="step mdm reveal d2">
+        <div class="step-num">03</div>
+        <h3>Meet us on tour</h3>
+        <p>We're bringing it to cities near you — dates are being locked in now.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="platforms">
+  <div class="wrap-wide">
+    <div class="sec-head reveal"><h2>Choose Your <em>Platform</em></h2></div>
+    <div class="plat-grid">
+      <a class="plat-card fx reveal" href="https://www.tradewithfestx.com/" target="_blank" rel="noopener">
+        <img src="https://ffxlryusmstnfjedleds.supabase.co/storage/v1/object/public/Assets/festxlogocolour.png" alt="FestX">
+        <p>Create your account, trade the platform, and get MDM's course material with it.</p>
+        <span class="plat-btn">Go to FestX →</span>
+        <span class="plat-url">tradewithfestx.com</span>
+      </a>
+      <a class="plat-card mdm reveal d1" href="https://www.mdmtraders.com/" target="_blank" rel="noopener">
+        <img src="https://yscggkgvxfjvfmnulrcy.supabase.co/storage/v1/object/public/Media/MDM%20loogo-06.png" alt="MDM">
+        <p>Join the community, get the training, and unlock FestX's course material too.</p>
+        <span class="plat-btn">Go to MDM →</span>
+        <span class="plat-url">mdmtraders.com</span>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -469,35 +587,12 @@
 <div class="float-cta" id="floatCta">
   <div class="float-cta-inner">
     <div class="float-cta-copy">
-      <strong>FestX × MDM Live — Thurs 27th Aug</strong>
-      <span class="seats-info" id="seatsInfoFloat"></span>
+      <strong>FestX × MDM</strong>
+      <span>Pick your platform</span>
     </div>
-    <button class="cta-btn" id="openRegisterFloat">Save My Free Spot →</button>
-  </div>
-</div>
-
-<div class="overlay" id="thanksOverlay">
-  <div class="modal ticket-modal">
-    <button class="modal-close" data-close>&times;</button>
-    <div class="ticket-head">
-      <div class="ticket-check">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <h3>Your Seat Is Reserved</h3>
-      <p>Here's your ticket for the FestX × MDM session.</p>
-    </div>
-    <div class="ticket-stub">
-      <div class="ticket-row"><span>Attendee</span><span id="ticketName">—</span></div>
-      <div class="ticket-row"><span>Event</span><span>FestX × MDM Live</span></div>
-      <div class="ticket-row"><span>Date</span><span>Thurs 27th Aug 2026</span></div>
-      <div class="ticket-row"><span>Time</span><span>20:00 GMT+2</span></div>
-      <div class="ticket-row"><span>Ticket ID</span><span class="ticket-id" id="ticketId">—</span></div>
-    </div>
-    <div class="ticket-notice">
-      You'll get a confirmation email at <b id="ticketEmail">your inbox</b> along with a reminder at <b>18:00 GMT+2</b> — 2 hours before we go live.
-    </div>
-    <div class="ticket-foot">
-      <button class="modal-submit" data-close>Done</button>
+    <div class="float-cta-actions">
+      <a class="cta-btn fx" href="https://www.tradewithfestx.com/" target="_blank" rel="noopener">FestX →</a>
+      <a class="cta-btn mdm" href="https://www.mdmtraders.com/" target="_blank" rel="noopener">MDM →</a>
     </div>
   </div>
 </div>
@@ -526,81 +621,6 @@
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal:not(.split-header .reveal)').forEach(el => io.observe(el));
 
-  const CAPACITY = 1000;
-  const ctaButtons = [document.getElementById('openRegisterFloat')];
-  const seatsInfoEls = [document.getElementById('seatsInfoFloat'), document.getElementById('seatsInfoForm')];
-
-
-  /* Seat counts stay hidden — the count is only used to close registration
-     once capacity is reached. */
-  function renderSeats(remaining){
-    const full = remaining <= 0;
-    const text = full ? 'No more space' : '';
-    seatsInfoEls.forEach(el => { if (el) { el.textContent = text; el.classList.toggle('is-full', full); } });
-    ctaButtons.forEach(btn => { if (btn) btn.disabled = full; });
-  }
-
-  async function loadSeats(){
-    try {
-      const resp = await fetch('/api/seats');
-      const data = await resp.json();
-      if (!resp.ok) throw new Error('failed');
-      renderSeats(data.remaining);
-    } catch (e) {
-      seatsInfoEls.forEach(el => { if (el) el.textContent = ''; });
-    }
-  }
-  loadSeats();
-
-  const thanksOverlay = document.getElementById('thanksOverlay');
-  const registerSection = document.getElementById('register');
-  const smooth = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-  ctaButtons.forEach(btn => btn && btn.addEventListener('click', () => {
-    registerSection.scrollIntoView({ behavior: smooth, block: 'center' });
-    setTimeout(() => document.getElementById('regName').focus({ preventScroll: true }), smooth === 'smooth' ? 550 : 0);
-  }));
-  document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => {
-    thanksOverlay.classList.remove('open');
-  }));
-  const registerForm = document.getElementById('registerForm');
-  const submitBtn = registerForm.querySelector('.modal-submit');
-  registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('regName').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const phone = document.getElementById('regPhone').value.trim();
-
-    const originalLabel = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Reserving…';
-
-    try {
-      const resp = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ full_name: name, email, phone, attendance_mode: 'live' }),
-      });
-      const data = await resp.json();
-      if (!resp.ok) {
-        alert(data.error || 'Something went wrong. Please try again.');
-        return;
-      }
-      document.getElementById('ticketName').textContent = data.full_name || name || 'Guest';
-      document.getElementById('ticketEmail').textContent = data.email || email || 'your inbox';
-      document.getElementById('ticketId').textContent = data.ticket_id;
-      thanksOverlay.classList.add('open');
-      registerForm.reset();
-      loadSeats();
-    } catch (err) {
-      alert('Network error — please check your connection and try again.');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalLabel;
-    }
-  });
-  thanksOverlay.addEventListener('click', (e) => {
-    if (e.target === thanksOverlay) thanksOverlay.classList.remove('open');
-  });
 </script>
 </body>
 </html>
