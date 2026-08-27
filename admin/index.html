@@ -371,11 +371,18 @@
 
   document.getElementById('exportBtn').addEventListener('click', () => {
     if (!registrants.length) { showToast('Nothing to export yet'); return; }
-    const emails = registrants.map(r => `"${String(r.email || '').replace(/"/g, '""')}"`);
-    const blob = new Blob([emails.join(',')], { type: 'text/csv' });
+    const esc = v => `"${String(v || '').replace(/"/g, '""')}"`;
+    const lines = registrants.map(r => {
+      const name = String(r.name || '').trim();
+      const spaceIdx = name.indexOf(' ');
+      const firstName = spaceIdx === -1 ? name : name.slice(0, spaceIdx);
+      const lastName = spaceIdx === -1 ? '' : name.slice(spaceIdx + 1);
+      return [r.email, firstName, lastName].map(esc).join(',');
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'festx-mdm-registrants.csv';
+    a.href = url; a.download = 'zoom-registrants.csv';
     a.click();
     URL.revokeObjectURL(url);
   });
