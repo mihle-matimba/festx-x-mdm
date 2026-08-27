@@ -371,9 +371,8 @@
 
   document.getElementById('exportBtn').addEventListener('click', () => {
     if (!registrants.length) { showToast('Nothing to export yet'); return; }
-    const header = ['Name','Email','Phone','Attendance','Ticket ID','Registered At'];
-    const lines = [header.join(',')].concat(registrants.map(r => [r.name, r.email, r.phone, r.mode, r.ticketId, r.registeredAt].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')));
-    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const emails = registrants.map(r => `"${String(r.email || '').replace(/"/g, '""')}"`);
+    const blob = new Blob([emails.join(',')], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = 'festx-mdm-registrants.csv';
