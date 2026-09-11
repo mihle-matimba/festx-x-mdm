@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>FestX × MDM — Tour RSVPs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#030303; --panel:#0d0b0c; --panel-2:#131011; --line:rgba(255,255,255,.1); --line-soft:rgba(255,255,255,.06);
+    --red:#f2503d; --violet:#8a5cc4; --violet-t:#b096e8; --green:#3ddc84;
+    --text:#f6f3f2; --muted:#a39a97; --muted-2:#6f6664;
+    --display:'Manrope',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;color:var(--text);font-family:var(--display);line-height:1.5;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(ellipse 900px 600px at 6% -8%, rgba(242,80,61,.24), transparent 55%),
+      radial-gradient(ellipse 900px 600px at 100% 0%, rgba(126,86,180,.28), transparent 55%),
+      var(--bg);
+    background-attachment:fixed;min-height:100vh;padding:28px 22px 60px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:26px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand img{height:30px;width:auto;display:block;}
+  .brand .x{color:var(--muted-2);font-family:var(--mono);font-size:15px;}
+  .brand-title{margin-left:8px;padding-left:16px;border-left:1px solid var(--line);}
+  .brand-title h1{margin:0;font-size:15px;font-weight:700;}
+  .brand-title span{display:block;font-size:11.5px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em;margin-top:1px;}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  @media (max-width:720px){.stats{grid-template-columns:1fr;}}
+  .stat{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden;}
+  .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--violet));opacity:.8;}
+  .stat .label{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .stat .value{font-size:28px;font-weight:800;line-height:1;}
+  .stat .value small{font-size:14px;color:var(--muted);font-weight:600;}
+  .stat .sub{margin-top:8px;font-size:12px;color:var(--muted);}
+  .capacity-bar{margin-top:12px;height:7px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;}
+  .capacity-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--red),var(--violet));transition:width .5s ease;}
+
+  .panel{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:20px 22px;border-bottom:1px solid var(--line);}
+  .panel-head h2{margin:0;font-size:16px;font-weight:700;}
+  .panel-head .count{font-family:var(--mono);color:var(--muted);font-size:12.5px;margin-left:8px;font-weight:500;}
+
+  .btn{font-family:var(--display);font-weight:700;font-size:12.5px;border-radius:9px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+  .btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2);}
+  .btn-primary{background:linear-gradient(135deg,var(--red),var(--violet));border:none;}
+
+  .toolbar{display:flex;gap:10px;padding:14px 22px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;}
+  .toolbar input{flex:1;min-width:180px;background:#000;border:1px solid var(--line);color:var(--text);padding:10px 14px;border-radius:9px;font-family:var(--display);font-size:13px;}
+  .toolbar select{background:#000;border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-family:var(--display);font-size:13px;}
+  .toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--violet);}
+
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:12px 22px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:13px 22px;border-bottom:1px solid var(--line-soft);font-size:13.5px;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(255,255,255,.02);}
+  .cell-name{font-weight:700;}
+  .cell-mono{color:var(--muted);font-family:var(--mono);font-size:12.5px;}
+  .tag{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid rgba(242,80,61,.35);background:rgba(242,80,61,.08);color:var(--red);}
+  .row-del{background:none;border:none;color:var(--muted-2);cursor:pointer;padding:6px;border-radius:6px;}
+  .row-del:hover{color:var(--red);background:rgba(242,80,61,.1);}
+  .empty{padding:56px 30px;text-align:center;color:var(--muted);font-size:13.5px;}
+  .empty h3{margin:0 0 6px;font-size:15.5px;color:var(--text);}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel-2);border:1px solid var(--line);padding:12px 18px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .foot-note{text-align:center;color:var(--muted-2);font-size:11.5px;margin-top:22px;font-family:var(--mono);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <img src="https://ffxlryusmstnfjedleds.supabase.co/storage/v1/object/public/Assets/festxlogocolour.png" alt="FestX">
+      <span class="x">×</span>
+      <img src="https://yscggkgvxfjvfmnulrcy.supabase.co/storage/v1/object/public/Media/MDM%20loogo-06.png" alt="MDM">
+      <div class="brand-title">
+        <h1>Tour RSVPs</h1>
+        <span>Johannesburg · 25 Sept · 11am · Apollo Hotel</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <a class="btn" href="/admin">← Zoom registrants</a>
+      <button class="btn" id="logoutBtn">Log out</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Total RSVPs</div>
+      <div class="value" id="statTotal">0</div>
+      <div class="sub" id="statTotalSub">No RSVPs yet</div>
+    </div>
+    <div class="stat">
+      <div class="label">Johannesburg capacity</div>
+      <div class="value" id="statCap">—</div>
+      <div class="capacity-bar" id="capBar" hidden><div class="capacity-fill" id="capFill" style="width:0%"></div></div>
+      <div class="sub" id="statCapSub">Set RSVP_CAPACITY_JOHANNESBURG to cap it</div>
+    </div>
+    <div class="stat">
+      <div class="label">Last RSVP</div>
+      <div class="value" style="font-size:18px;" id="statLast">—</div>
+      <div class="sub" id="statLastSub">Waiting on the first one</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>RSVPs<span class="count" id="tableCount">(0)</span></h2>
+      <button class="btn btn-primary" id="exportBtn">Export CSV</button>
+    </div>
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="Search by name, email or phone…">
+      <select id="cityFilter"><option value="all">All cities</option></select>
+    </div>
+    <div id="tableWrap" class="table-wrap"></div>
+  </div>
+
+  <div class="foot-note">Data stored in Supabase · table: rsvps</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  let rsvps = [];
+  let events = {};
+  const $ = id => document.getElementById(id);
+
+  function showToast(msg){
+    $('toast').textContent = msg;
+    $('toast').classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => $('toast').classList.remove('show'), 2200);
+  }
+  const fmtTime = iso => new Date(iso).toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  const escapeHtml = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const cityName = c => (events[c] && events[c].name) || c;
+
+  // Same session cookie as the main dashboard, so one login covers both.
+  try { localStorage.removeItem('festx_admin_pass'); } catch (e) {}
+  async function apiFetch(url, opts){
+    const resp = await fetch(url, Object.assign({ cache: 'no-store' }, opts));
+    if (resp.status === 401) location.replace('/login?next=' + encodeURIComponent(location.pathname));
+    return resp;
+  }
+
+  $('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {});
+    location.replace('/login');
+  });
+
+  async function load(){
+    try {
+      const resp = await apiFetch('/api/rsvps');
+      if (!resp.ok) throw new Error('load failed');
+      const data = await resp.json();
+      rsvps = data.rsvps || [];
+      events = data.events || {};
+    } catch (e) {
+      rsvps = [];
+      showToast('Could not load RSVPs');
+    }
+    const filter = $('cityFilter');
+    filter.length = 1;
+    Object.entries(events).forEach(([c, ev]) => filter.add(new Option(ev.name, c)));
+    render();
+  }
+
+  function renderStats(){
+    $('statTotal').textContent = rsvps.length;
+    $('statTotalSub').textContent = rsvps.length ? `${rsvps.length === 1 ? '1 person' : rsvps.length + ' people'} on the list` : 'No RSVPs yet';
+
+    const jhb = events.johannesburg;
+    const cap = jhb ? jhb.capacity : null;
+    const booked = rsvps.filter(r => r.city === 'johannesburg').length;
+    if (cap === null || cap === undefined) {
+      $('statCap').innerHTML = 'No limit';
+      $('capBar').hidden = true;
+      $('statCapSub').textContent = 'Set RSVP_CAPACITY_JOHANNESBURG to cap it';
+    } else {
+      $('statCap').innerHTML = `${booked} <small>/ ${cap}</small>`;
+      $('capBar').hidden = false;
+      $('capFill').style.width = (cap === 0 ? 100 : Math.min(booked / cap * 100, 100)) + '%';
+      $('statCapSub').textContent = booked >= cap ? 'Full — the site shows "Fully booked"' : `${cap - booked} left`;
+    }
+
+    if (rsvps.length) {
+      $('statLast').textContent = rsvps[0].full_name;
+      $('statLastSub').textContent = fmtTime(rsvps[0].created_at);
+    } else {
+      $('statLast').textContent = '—';
+      $('statLastSub').textContent = 'Waiting on the first one';
+    }
+  }
+
+  function visibleRows(){
+    const q = $('searchInput').value.trim().toLowerCase();
+    const c = $('cityFilter').value;
+    return rsvps.filter(r =>
+      (c === 'all' || r.city === c) &&
+      (!q || [r.full_name, r.email, r.phone].some(v => String(v || '').toLowerCase().includes(q)))
+    );
+  }
+
+  function render(){
+    renderStats();
+    const rows = visibleRows();
+    $('tableCount').textContent = `(${rows.length})`;
+
+    if (!rsvps.length) {
+      $('tableWrap').innerHTML = '<div class="empty"><h3>No RSVPs yet</h3>RSVPs from the Johannesburg form on the site will land here.</div>';
+      return;
+    }
+    if (!rows.length) {
+      $('tableWrap').innerHTML = '<div class="empty"><h3>No matches</h3>Try a different search or city.</div>';
+      return;
+    }
+    $('tableWrap').innerHTML = `
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>RSVP'd</th><th></th></tr></thead>
+        <tbody>${rows.map(r => `
+          <tr>
+            <td class="cell-name">${escapeHtml(r.full_name)}</td>
+            <td class="cell-mono">${escapeHtml(r.email)}</td>
+            <td class="cell-mono">${escapeHtml(r.phone || '—')}</td>
+            <td><span class="tag">${escapeHtml(cityName(r.city))}</span></td>
+            <td class="cell-mono">${fmtTime(r.created_at)}</td>
+            <td><button class="row-del" data-id="${escapeHtml(r.id)}" title="Remove">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button></td>
+          </tr>`).join('')}</tbody>
+      </table>`;
+
+    $('tableWrap').querySelectorAll('.row-del').forEach(btn => btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const row = rsvps.find(r => String(r.id) === id);
+      if (!row || !confirm(`Remove ${row.full_name}'s RSVP?`)) return;
+      const resp = await apiFetch('/api/rsvps?id=' + encodeURIComponent(id), { method: 'DELETE' });
+      if (!resp.ok) { showToast('Could not remove RSVP'); return; }
+      rsvps = rsvps.filter(r => String(r.id) !== id);
+      render();
+      showToast('RSVP removed');
+    }));
+  }
+
+  $('searchInput').addEventListener('input', render);
+  $('cityFilter').addEventListener('change', render);
+
+  // Exports what's currently filtered, with a header row — handy as a
+  // door list. (The Zoom export on the other dashboard is headerless on purpose.)
+  $('exportBtn').addEventListener('click', () => {
+    const rows = visibleRows();
+    if (!rows.length) { showToast('Nothing to export'); return; }
+    const esc = v => { const s = String(v ?? ''); return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+    const lines = [['Name', 'Email', 'Phone', 'City', 'RSVPd at'].join(',')]
+      .concat(rows.map(r => [r.full_name, r.email, r.phone, cityName(r.city), r.created_at].map(esc).join(',')));
+    const url = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/csv' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tour-rsvps.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

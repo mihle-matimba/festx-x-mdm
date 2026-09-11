@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>FestX × MDM — Registration Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,7 +139,11 @@
         <span>FestX × MDM Live Session</span>
       </div>
     </div>
-    <div class="live-pill"><span class="dot"></span> Thurs 27 Aug · 20:00 GMT+2 — <span class="ctd" id="countdown">—</span></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <a class="btn" href="/admin/rsvps" style="text-decoration:none;">Tour RSVPs →</a>
+      <button class="btn btn-ghost" id="logoutBtn">Log out</button>
+      <div class="live-pill"><span class="dot"></span> Thurs 27 Aug · 20:00 GMT+2 — <span class="ctd" id="countdown">—</span></div>
+    </div>
   </div>
 
   <div class="stats">
@@ -238,27 +243,21 @@
   updateCountdown();
   setInterval(updateCountdown, 30000);
 
-  function getAdminToken(){ return localStorage.getItem('festx_admin_pass') || ''; }
-  function setAdminToken(t){ localStorage.setItem('festx_admin_pass', t); }
+  // Auth is the session cookie from /login, sent automatically. An expired
+  // session goes back through the login page. The old password lived in
+  // localStorage — clear it from any browser that still has it.
+  try { localStorage.removeItem('festx_admin_pass'); } catch (e) {}
 
   async function apiFetch(url, opts){
-    opts = opts || {};
-    opts.headers = Object.assign({}, opts.headers);
-    const token = getAdminToken();
-    if (token) opts.headers['Authorization'] = 'Bearer ' + token;
-    let resp = await fetch(url, opts);
-    if (resp.status === 401) {
-      const entered = prompt('Enter admin password:');
-      if (entered) {
-        setAdminToken(entered);
-        opts.headers['Authorization'] = 'Bearer ' + entered;
-        resp = await fetch(url, opts);
-      } else {
-        showToast('Password required to view registrants');
-      }
-    }
+    const resp = await fetch(url, Object.assign({ cache: 'no-store' }, opts));
+    if (resp.status === 401) location.replace('/login?next=' + encodeURIComponent(location.pathname));
     return resp;
   }
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {});
+    location.replace('/login');
+  });
 
   async function load(){
     try {

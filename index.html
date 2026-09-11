@@ -343,6 +343,20 @@
   .tl-card h3{font-size:23px;font-weight:800;margin:0 0 10px;letter-spacing:-0.01em;}
   .tl-date{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:700;margin:0;}
   .tl-date svg{width:17px;height:17px;flex-shrink:0;}
+  .tl-venue{display:flex;align-items:center;gap:9px;margin:8px 0 0;font-size:14.5px;font-weight:600;color:var(--text);text-decoration:none;}
+  .tl-venue svg{width:17px;height:17px;flex-shrink:0;opacity:.75;}
+  a.tl-venue span{text-decoration:underline;text-decoration-color:rgba(255,255,255,.35);text-underline-offset:3px;}
+  a.tl-venue:hover span{text-decoration-color:currentColor;}
+  a.tl-venue small{font-size:12px;opacity:.6;}
+  .tl-rsvp{
+    display:inline-flex;align-self:flex-start;align-items:center;gap:8px;margin-top:16px;
+    padding:11px 22px;border-radius:999px;font-weight:700;font-size:14px;color:#fff;text-decoration:none;
+    background:linear-gradient(135deg,#f2503d,#c73824);box-shadow:0 8px 26px -8px rgba(242,80,61,.75);
+    transition:transform .2s ease;
+  }
+  .tl-rsvp:hover{transform:translateY(-2px);}
+  .tl-rsvp:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+  .tl-rsvp.is-full{background:rgba(255,255,255,.08);box-shadow:none;color:var(--muted);pointer-events:none;}
   /* Live countdown. Empty until JS fills it, so no-JS just sees the date. */
   .tl-countdown{
     display:flex;gap:12px;margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);
@@ -388,6 +402,32 @@
     .tl-item{padding-top:0;padding-left:42px;}
     .tl-node{top:28px;}
   }
+
+  /* ===== RSVP ===== */
+  [hidden]{display:none!important;}
+  .rsvp-meta{text-align:center;color:var(--muted);font-size:15px;margin:-14px auto 26px;}
+  .rsvp-meta a{color:var(--text);font-weight:700;text-decoration:underline;text-decoration-color:rgba(242,80,61,.6);text-underline-offset:3px;}
+  .rsvp-form, .rsvp-done, .rsvp-full{max-width:560px;margin:0 auto;}
+  .rf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:520px){ .rf-row{grid-template-columns:1fr;gap:0;} }
+  .rsvp-form input{
+    width:100%;background:#000;border:1px solid var(--line);color:var(--text);
+    padding:14px 16px;border-radius:12px;margin-bottom:12px;font-family:var(--display);font-size:15px;
+  }
+  .rsvp-form input:focus{outline:none;border-color:rgba(242,80,61,.6);box-shadow:0 0 0 3px rgba(242,80,61,.16);}
+  .rsvp-submit{
+    width:100%;border:none;cursor:pointer;padding:16px;border-radius:12px;
+    font-family:var(--display);font-weight:700;font-size:16px;color:#fff;
+    background:linear-gradient(135deg,#f2503d,#c73824);box-shadow:0 10px 34px -10px rgba(242,80,61,.7);
+  }
+  .rsvp-submit:disabled{opacity:.6;cursor:wait;}
+  .rsvp-msg{min-height:1.4em;margin:12px 0 0;text-align:center;font-size:13.5px;color:var(--red);}
+  .rsvp-done, .rsvp-full{
+    text-align:center;border:1px solid rgba(242,80,61,.22);border-radius:18px;padding:34px 28px;
+    background:linear-gradient(160deg, rgba(242,80,61,.10), transparent 70%), var(--panel);
+  }
+  .rsvp-done h3, .rsvp-full h3{margin:0 0 8px;font-size:21px;}
+  .rsvp-done p, .rsvp-full p{margin:0;color:var(--muted);font-size:15px;line-height:1.55;}
 
   /* ===== HOW IT WORKS ===== */
   .steps{
@@ -561,8 +601,11 @@
         <div class="tl-card" style="--city:url('/assets/city-johannesburg.png')">
           <div class="num">STOP 01</div>
           <h3>Johannesburg</h3>
-          <p class="tl-date"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>26 September</p>
-          <p class="tl-countdown" data-date="2026-09-26T00:00"></p>
+          <p class="tl-date"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>25 September · 11am</p>
+          <a class="tl-venue" href="https://www.google.com/maps/search/?api=1&amp;query=Apollo%20Hotel%20Johannesburg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg><span>Apollo Hotel</span><small>↗</small></a>
+          <!-- Real start time, pinned to SAST so it's right wherever the viewer is. -->
+          <p class="tl-countdown" data-date="2026-09-25T11:00+02:00"></p>
+          <a class="tl-rsvp" href="#rsvp" data-rsvp-open>RSVP →</a>
         </div>
       </li>
       <li class="tl-item mid reveal d1">
@@ -587,6 +630,33 @@
   </div>
 </section>
 
+<section class="sec" id="rsvp">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>RSVP <em>Johannesburg</em></h2></div>
+    <p class="rsvp-meta reveal">25 September · 11am · <a href="https://www.google.com/maps/search/?api=1&amp;query=Apollo%20Hotel%20Johannesburg" target="_blank" rel="noopener">Apollo Hotel</a></p>
+
+    <form class="rsvp-form reveal" id="rsvpForm" data-city="johannesburg">
+      <div class="rf-row">
+        <input type="text" name="full_name" id="rsvpName" placeholder="Full name" aria-label="Full name" autocomplete="name" required>
+        <input type="email" name="email" placeholder="Email address" aria-label="Email address" autocomplete="email" required>
+      </div>
+      <input type="tel" name="phone" placeholder="Phone number" aria-label="Phone number" autocomplete="tel" required>
+      <button type="submit" class="rsvp-submit">RSVP for Johannesburg →</button>
+      <p class="rsvp-msg" id="rsvpMsg" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="rsvp-done" id="rsvpDone" hidden>
+      <h3>You're on the list, <span id="rsvpDoneName">friend</span>.</h3>
+      <p>See you on 25 September at 11am at the Apollo Hotel. Save the date.</p>
+    </div>
+
+    <div class="rsvp-full" id="rsvpFull" hidden>
+      <h3>Johannesburg is fully booked</h3>
+      <p>Durban and Cape Town are next — keep an eye on the tour dates above.</p>
+    </div>
+  </div>
+</section>
+
 <section class="hero">
   <div class="wrap">
     <p class="hero-sub reveal">FestX and MDM have joined forces. Sign up on either side and you get the other one's course material with it — one login, both libraries. Pick the door that fits and start today.</p>
@@ -595,7 +665,7 @@
     <div class="trust-box reveal">
       <div class="trust-item"><strong>One login</strong>Both course libraries</div>
       <div class="trust-item"><strong>Open now</strong>Sign up in minutes</div>
-      <div class="trust-item"><strong>On tour</strong>3 cities from 26 Sept</div>
+      <div class="trust-item"><strong>On tour</strong>3 cities from 25 Sept</div>
     </div>
   </div>
 </section>
@@ -722,6 +792,74 @@
     }
     tick();
     setInterval(tick, 1000);
+  })();
+
+  /* Tour RSVP. The city comes from the form's data-city, so another stop only
+     needs its own section and an entry in api/_rsvp-events.js. */
+  (function(){
+    const form = document.getElementById('rsvpForm');
+    if (!form) return;
+    const city = form.dataset.city;
+    const msg = document.getElementById('rsvpMsg');
+    const done = document.getElementById('rsvpDone');
+    const full = document.getElementById('rsvpFull');
+    const submit = form.querySelector('.rsvp-submit');
+    const openers = document.querySelectorAll('[data-rsvp-open]');
+    const smooth = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+
+    function showFull(){
+      form.hidden = true;
+      full.hidden = false;
+      openers.forEach(a => {
+        a.textContent = 'Fully booked';
+        a.classList.add('is-full');
+        a.setAttribute('aria-disabled', 'true');
+      });
+    }
+
+    openers.forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('rsvp').scrollIntoView({ behavior: smooth, block: 'center' });
+      if (!form.hidden) {
+        setTimeout(() => document.getElementById('rsvpName').focus({ preventScroll: true }), smooth === 'smooth' ? 550 : 0);
+      }
+    }));
+
+    // Best-effort: if this fails the form stays open and the POST re-checks.
+    fetch('/api/rsvp?city=' + encodeURIComponent(city))
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => { if (d && d.full) showFull(); })
+      .catch(() => {});
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      msg.textContent = '';
+      const data = Object.fromEntries(new FormData(form));
+      const label = submit.textContent;
+      submit.disabled = true;
+      submit.textContent = 'Saving…';
+      try {
+        const resp = await fetch('/api/rsvp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ city, ...data }),
+        });
+        const body = await resp.json().catch(() => ({}));
+        if (resp.ok) {
+          document.getElementById('rsvpDoneName').textContent = String(body.full_name || data.full_name).split(' ')[0];
+          form.hidden = true;
+          done.hidden = false;
+          return;
+        }
+        if (body.full) { showFull(); return; }
+        msg.textContent = body.error || 'Something went wrong. Please try again.';
+      } catch {
+        msg.textContent = 'Network error — check your connection and try again.';
+      } finally {
+        submit.disabled = false;
+        submit.textContent = label;
+      }
+    });
   })();
 
 </script>

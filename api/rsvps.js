@@ -1,3 +1,4 @@
+const { EVENTS, capacityFor } = require('./_rsvp-events');
 const { requireAdmin } = require('./_auth');
 
 module.exports = async function handler(req, res) {
@@ -14,28 +15,30 @@ module.exports = async function handler(req, res) {
   const base = SUPABASE_URL.replace(/\/$/, '');
 
   if (req.method === 'GET') {
-    const url = `${base}/rest/v1/registrations?select=*&order=registered_at.desc`;
-    const resp = await fetch(url, {
+    const resp = await fetch(`${base}/rest/v1/rsvps?select=*&order=created_at.desc`, {
       headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
     });
     if (!resp.ok) {
-      console.error('Supabase list failed', resp.status, await resp.text());
-      return res.status(502).json({ error: 'Could not load registrations' });
+      console.error('Supabase RSVP list failed', resp.status, await resp.text());
+      return res.status(502).json({ error: 'Could not load RSVPs' });
     }
-    return res.status(200).json(await resp.json());
+    // Capacity rides along so the dashboard can show the cap per city.
+    const events = Object.fromEntries(
+      Object.entries(EVENTS).map(([city, ev]) => [city, { name: ev.name, capacity: capacityFor(ev) }])
+    );
+    return res.status(200).json({ rsvps: await resp.json(), events });
   }
 
   if (req.method === 'DELETE') {
     const id = req.query.id;
     if (!id) return res.status(400).json({ error: 'Missing id' });
-    const url = `${base}/rest/v1/registrations?id=eq.${encodeURIComponent(id)}`;
-    const resp = await fetch(url, {
+    const resp = await fetch(`${base}/rest/v1/rsvps?id=eq.${encodeURIComponent(id)}`, {
       method: 'DELETE',
       headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
     });
     if (!resp.ok) {
-      console.error('Supabase delete failed', resp.status, await resp.text());
-      return res.status(502).json({ error: 'Could not delete registration' });
+      console.error('Supabase RSVP delete failed', resp.status, await resp.text());
+      return res.status(502).json({ error: 'Could not delete RSVP' });
     }
     return res.status(204).end();
   }

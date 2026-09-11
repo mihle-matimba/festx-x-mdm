@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>FestX × MDM — Admin Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#030303; --panel:#0d0b0c; --line:rgba(255,255,255,.1);
+    --red:#f2503d; --violet:#8a5cc4; --text:#f6f3f2; --muted:#a39a97;
+    --display:'Manrope',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+    color:var(--text);font-family:var(--display);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(ellipse 800px 600px at 0% 0%, rgba(242,80,61,.26), transparent 55%),
+      radial-gradient(ellipse 800px 600px at 100% 100%, rgba(126,86,180,.3), transparent 55%),
+      var(--bg);
+  }
+  .card{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:34px 30px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--violet));}
+  .brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:22px;}
+  .brand img{height:28px;width:auto;}
+  .brand span{color:var(--muted);font-family:var(--mono);}
+  h1{margin:0 0 6px;font-size:20px;text-align:center;}
+  p.sub{margin:0 0 24px;color:var(--muted);font-size:13.5px;text-align:center;}
+  label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  input{width:100%;background:#000;border:1px solid var(--line);color:var(--text);padding:13px 14px;border-radius:10px;font-family:var(--display);font-size:15px;}
+  input:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px rgba(138,92,196,.2);}
+  button{width:100%;margin-top:16px;border:none;cursor:pointer;padding:14px;border-radius:10px;font-family:var(--display);font-weight:700;font-size:15px;color:#fff;background:linear-gradient(135deg,var(--red),var(--violet));}
+  button:disabled{opacity:.6;cursor:wait;}
+  .msg{min-height:1.3em;margin:14px 0 0;text-align:center;font-size:13px;color:var(--red);}
+</style>
+</head>
+<body>
+  <form class="card" id="loginForm">
+    <div class="brand">
+      <img src="https://ffxlryusmstnfjedleds.supabase.co/storage/v1/object/public/Assets/festxlogocolour.png" alt="FestX">
+      <span>×</span>
+      <img src="https://yscggkgvxfjvfmnulrcy.supabase.co/storage/v1/object/public/Media/MDM%20loogo-06.png" alt="MDM">
+    </div>
+    <h1>Admin login</h1>
+    <p class="sub">Registrations and tour RSVPs</p>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" autocomplete="current-password" required autofocus>
+    <button type="submit" id="submitBtn">Log in</button>
+    <p class="msg" id="msg" role="alert"></p>
+  </form>
+
+<script>
+(function(){
+  // The old dashboard kept the (now retired) password in localStorage — clear it.
+  try { localStorage.removeItem('festx_admin_pass'); } catch (e) {}
+
+  // Only ever send people on to an admin page, never to another site.
+  const next = new URLSearchParams(location.search).get('next') || '';
+  const target = /^\/admin(\/|$)/.test(next) ? next : '/admin';
+
+  fetch('/api/admin-session', { cache: 'no-store' })
+    .then(r => r.json())
+    .then(d => { if (d.authenticated) location.replace(target); })
+    .catch(() => {});
+
+  const form = document.getElementById('loginForm');
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('msg');
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    msg.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Checking…';
+    try {
+      const resp = await fetch('/api/admin-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: form.password.value }),
+      });
+      if (resp.ok) { location.replace(target); return; }
+      const body = await resp.json().catch(() => ({}));
+      msg.textContent = body.error || 'Could not log in.';
+      form.password.select();
+    } catch (err) {
+      msg.textContent = 'Network error — try again.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Log in';
+    }
+  });
+})();
+</script>
+</body>
+</html>
