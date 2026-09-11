@@ -4,129 +4,81 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>FestX × MDM — Registration Dashboard</title>
+<title>FestX × MDM — Tour RSVPs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#030303; --panel:#0d0b0c; --panel-2:#131011; --line:rgba(255,255,255,.1); --line-soft:rgba(255,255,255,.06);
-    --red:#f2503d; --red-2:#c73824;
-    --mag:#e0499f; --mag-2:#a3327c;
-    --green:#3ddc84;
+    --red:#f2503d; --violet:#8a5cc4; --violet-t:#b096e8; --green:#3ddc84;
     --text:#f6f3f2; --muted:#a39a97; --muted-2:#6f6664;
     --display:'Manrope',sans-serif; --mono:'JetBrains Mono',monospace;
   }
   *{box-sizing:border-box;}
-  ::selection{background:rgba(224,73,159,.35);}
   body{
     margin:0;color:var(--text);font-family:var(--display);line-height:1.5;-webkit-font-smoothing:antialiased;
     background:
-      radial-gradient(ellipse 900px 600px at 6% -8%, rgba(224,73,159,.28), transparent 55%),
-      radial-gradient(ellipse 900px 600px at 100% 0%, rgba(242,80,61,.24), transparent 55%),
-      radial-gradient(ellipse 1000px 900px at 50% 115%, rgba(224,73,159,.14), transparent 60%),
+      radial-gradient(ellipse 900px 600px at 6% -8%, rgba(242,80,61,.24), transparent 55%),
+      radial-gradient(ellipse 900px 600px at 100% 0%, rgba(126,86,180,.28), transparent 55%),
       var(--bg);
-    background-attachment:fixed;
-    min-height:100vh;
-    padding:28px 22px 60px;
+    background-attachment:fixed;min-height:100vh;padding:28px 22px 60px;
   }
-  a{color:inherit;}
   .wrap{max-width:1180px;margin:0 auto;}
 
-  /* ---- top bar ---- */
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:26px;}
   .brand{display:flex;align-items:center;gap:12px;}
   .brand img{height:30px;width:auto;display:block;}
   .brand .x{color:var(--muted-2);font-family:var(--mono);font-size:15px;}
   .brand-title{margin-left:8px;padding-left:16px;border-left:1px solid var(--line);}
-  .brand-title h1{margin:0;font-size:15px;font-weight:700;letter-spacing:-0.01em;}
+  .brand-title h1{margin:0;font-size:15px;font-weight:700;}
   .brand-title span{display:block;font-size:11.5px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em;margin-top:1px;}
 
-  .live-pill{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);padding:9px 15px 9px 13px;border-radius:999px;}
-  .live-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 10px 2px var(--red);animation:pulseDot 1.8s ease-in-out infinite;}
-  @keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.35;}}
-  .live-pill b{color:var(--text);font-weight:700;}
-  .live-pill .ctd{color:var(--mag);font-weight:700;}
-
-  /* ---- stat cards ---- */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
-  @media (max-width:900px){.stats{grid-template-columns:repeat(2,1fr);}}
-  @media (max-width:520px){.stats{grid-template-columns:1fr;}}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  @media (max-width:720px){.stats{grid-template-columns:1fr;}}
   .stat{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden;}
-  .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--mag),var(--red));opacity:.7;}
+  .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--violet));opacity:.8;}
   .stat .label{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-  .stat .value{font-size:28px;font-weight:800;letter-spacing:-0.01em;line-height:1;}
+  .stat .value{font-size:28px;font-weight:800;line-height:1;}
   .stat .value small{font-size:14px;color:var(--muted);font-weight:600;}
   .stat .sub{margin-top:8px;font-size:12px;color:var(--muted);}
-  .stat .sub.up{color:var(--green);}
+  .capacity-bar{margin-top:12px;height:7px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;}
+  .capacity-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--red),var(--violet));transition:width .5s ease;}
 
-  .capacity-wrap{margin-top:12px;}
-  .capacity-bar{height:7px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;}
-  .capacity-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--mag),var(--red));transition:width .5s cubic-bezier(.22,1,.36,1);}
-
-  /* ---- panel ---- */
   .panel{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:18px;overflow:hidden;}
   .panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:20px 22px;border-bottom:1px solid var(--line);}
   .panel-head h2{margin:0;font-size:16px;font-weight:700;}
   .panel-head .count{font-family:var(--mono);color:var(--muted);font-size:12.5px;margin-left:8px;font-weight:500;}
-  .panel-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
-  .btn{font-family:var(--display);font-weight:700;font-size:12.5px;border-radius:9px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);display:inline-flex;align-items:center;gap:6px;transition:background .15s ease, border-color .15s ease;}
+  .btn{font-family:var(--display);font-weight:700;font-size:12.5px;border-radius:9px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
   .btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2);}
-  .btn-primary{background:linear-gradient(135deg,var(--mag),var(--red));border:none;box-shadow:0 6px 24px -6px rgba(224,73,159,.5);}
-  .btn-primary:hover{filter:brightness(1.08);}
-  .btn-ghost{color:var(--muted);}
-  .btn-danger:hover{border-color:rgba(242,80,61,.5);color:var(--red);}
+  .btn-primary{background:linear-gradient(135deg,var(--red),var(--violet));border:none;}
 
   .toolbar{display:flex;gap:10px;padding:14px 22px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;}
-  .search{flex:1;min-width:180px;position:relative;}
-  .search input{width:100%;background:#000;border:1px solid var(--line);color:var(--text);padding:10px 14px 10px 34px;border-radius:9px;font-family:var(--display);font-size:13px;}
-  .search input:focus{outline:none;border-color:var(--mag);}
-  .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.5;}
-  .filter-select{background:#000;border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-family:var(--display);font-size:13px;}
+  .toolbar input{flex:1;min-width:180px;background:#000;border:1px solid var(--line);color:var(--text);padding:10px 14px;border-radius:9px;font-family:var(--display);font-size:13px;}
+  .toolbar select{background:#000;border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-family:var(--display);font-size:13px;}
+  .toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--violet);}
 
-  /* ---- table ---- */
+  .table-wrap{overflow-x:auto;}
   table{width:100%;border-collapse:collapse;}
   thead th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:12px 22px;border-bottom:1px solid var(--line);white-space:nowrap;}
-  tbody td{padding:13px 22px;border-bottom:1px solid var(--line-soft);font-size:13.5px;vertical-align:middle;}
+  tbody td{padding:13px 22px;border-bottom:1px solid var(--line-soft);font-size:13.5px;}
   tbody tr:last-child td{border-bottom:none;}
   tbody tr:hover{background:rgba(255,255,255,.02);}
   .cell-name{font-weight:700;}
-  .cell-email,.cell-phone{color:var(--muted);font-family:var(--mono);font-size:12.5px;}
-  .cell-id{font-family:var(--mono);font-size:12px;color:var(--mag);letter-spacing:.02em;}
-  .cell-time{color:var(--muted);font-size:12px;font-family:var(--mono);white-space:nowrap;}
-  .tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid;}
-  .tag-live{color:var(--green);border-color:rgba(61,220,132,.35);background:rgba(61,220,132,.08);}
-  .tag-replay{color:var(--muted);border-color:var(--line);background:rgba(255,255,255,.03);}
-  .row-del{background:none;border:none;color:var(--muted-2);cursor:pointer;padding:6px;border-radius:6px;line-height:1;}
+  .cell-mono{color:var(--muted);font-family:var(--mono);font-size:12.5px;}
+  .tag{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid rgba(242,80,61,.35);background:rgba(242,80,61,.08);color:var(--red);}
+  .row-del{background:none;border:none;color:var(--muted-2);cursor:pointer;padding:6px;border-radius:6px;}
   .row-del:hover{color:var(--red);background:rgba(242,80,61,.1);}
+  .empty{padding:56px 30px;text-align:center;color:var(--muted);font-size:13.5px;}
+  .empty h3{margin:0 0 6px;font-size:15.5px;color:var(--text);}
 
-  .empty{padding:60px 30px;text-align:center;}
-  .empty .icon{width:52px;height:52px;margin:0 auto 16px;border-radius:14px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.02);}
-  .empty h3{margin:0 0 6px;font-size:15.5px;}
-  .empty p{margin:0 0 18px;color:var(--muted);font-size:13px;max-width:340px;margin-left:auto;margin-right:auto;}
-
-  /* ---- modal ---- */
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
-  .overlay.open{display:flex;}
-  .modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;max-width:400px;width:100%;position:relative;}
-  .modal h3{margin:0 0 6px;font-size:18px;}
-  .modal p{color:var(--muted);font-size:13px;margin:0 0 18px;}
-  .modal label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;}
-  .modal input,.modal select{width:100%;background:#000;border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;margin-bottom:14px;font-family:var(--display);font-size:13.5px;}
-  .modal input:focus,.modal select:focus{outline:none;border-color:var(--mag);}
-  .modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
-  .modal-submit{width:100%;background:linear-gradient(135deg,var(--mag),var(--red));color:#fff;border:none;font-weight:700;padding:12px;border-radius:9px;cursor:pointer;font-size:13.5px;box-shadow:0 8px 26px -6px rgba(224,73,159,.45);}
-
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 12px 40px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;z-index:80;display:flex;align-items:center;gap:8px;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel-2);border:1px solid var(--line);padding:12px 18px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-  .toast .dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
-
   .foot-note{text-align:center;color:var(--muted-2);font-size:11.5px;margin-top:22px;font-family:var(--mono);}
 </style>
 </head>
 <body>
-
 <div class="wrap">
 
   <div class="topbar">
@@ -135,256 +87,186 @@
       <span class="x">×</span>
       <img src="https://yscggkgvxfjvfmnulrcy.supabase.co/storage/v1/object/public/Media/MDM%20loogo-06.png" alt="MDM">
       <div class="brand-title">
-        <h1>Registration Dashboard</h1>
-        <span>FestX × MDM Live Session</span>
+        <h1>Tour RSVPs</h1>
+        <span>FestX × MDM · 2026 Tour</span>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <a class="btn" href="/admin/rsvps" style="text-decoration:none;">Tour RSVPs →</a>
-      <button class="btn btn-ghost" id="logoutBtn">Log out</button>
-      <div class="live-pill"><span class="dot"></span> Thurs 27 Aug · 20:00 GMT+2 — <span class="ctd" id="countdown">—</span></div>
-    </div>
+    <button class="btn" id="logoutBtn">Log out</button>
   </div>
 
   <div class="stats">
     <div class="stat">
-      <div class="label">Total Registered</div>
+      <div class="label">Total RSVPs</div>
       <div class="value" id="statTotal">0</div>
-      <div class="sub" id="statTotalSub">No sign-ups yet</div>
+      <div class="sub" id="statTotalSub">No RSVPs yet</div>
     </div>
     <div class="stat">
-      <div class="label">Seats Remaining</div>
-      <div class="value" id="statSeats">— <small>/ —</small></div>
-      <div class="capacity-wrap">
-        <div class="capacity-bar"><div class="capacity-fill" id="capFill" style="width:0%"></div></div>
-      </div>
+      <div class="label">Johannesburg · 25 Sept · capacity</div>
+      <div class="value" id="statCap">—</div>
+      <div class="capacity-bar" id="capBar" hidden><div class="capacity-fill" id="capFill" style="width:0%"></div></div>
+      <div class="sub" id="statCapSub">Set RSVP_CAPACITY_JOHANNESBURG to cap it</div>
     </div>
     <div class="stat">
-      <div class="label">Reminder Email</div>
-      <div class="value" style="font-size:20px;">18:00 <small>GMT+2</small></div>
-      <div class="sub">Sent 2 hrs before doors open</div>
-    </div>
-    <div class="stat">
-      <div class="label">Last Sign-up</div>
+      <div class="label">Last RSVP</div>
       <div class="value" style="font-size:18px;" id="statLast">—</div>
-      <div class="sub" id="statLastSub">Waiting on your first registrant</div>
+      <div class="sub" id="statLastSub">Waiting on the first one</div>
     </div>
   </div>
 
   <div class="panel">
     <div class="panel-head">
-      <div><h2>Registrants<span class="count" id="tableCount">(0)</span></h2></div>
-      <div class="panel-actions">
-        <button class="btn btn-primary" id="exportBtn">Export CSV</button>
-      </div>
+      <h2>RSVPs<span class="count" id="tableCount">(0)</span></h2>
+      <button class="btn btn-primary" id="exportBtn">Export CSV</button>
     </div>
     <div class="toolbar">
-      <div class="search">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#a39a97" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="#a39a97" stroke-width="2" stroke-linecap="round"/></svg>
-        <input type="text" id="searchInput" placeholder="Search by name or email…">
-      </div>
-      <select class="filter-select" id="filterSelect">
-        <option value="all">All attendees</option>
-        <option value="live">Live only</option>
-        <option value="replay">Replay only</option>
-      </select>
+      <input type="text" id="searchInput" placeholder="Search by name, email or phone…">
+      <select id="cityFilter"><option value="all">All cities</option></select>
     </div>
-    <div id="tableWrap"></div>
+    <div id="tableWrap" class="table-wrap"></div>
   </div>
 
-  <div class="foot-note">Data stored in Supabase · FestX × MDM</div>
+  <div class="foot-note">Data stored in Supabase · table: rsvps</div>
 </div>
 
-<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg">Saved</span></div>
+<div class="toast" id="toast"></div>
 
 <script>
 (function(){
-  const EVENT_TIME = new Date('2026-08-27T20:00:00+02:00');
-  const CAPACITY = 1000;
-  let registrants = [];
-
-  const els = {
-    total: document.getElementById('statTotal'),
-    totalSub: document.getElementById('statTotalSub'),
-    seats: document.getElementById('statSeats'),
-    capFill: document.getElementById('capFill'),
-    last: document.getElementById('statLast'),
-    lastSub: document.getElementById('statLastSub'),
-    tableWrap: document.getElementById('tableWrap'),
-    tableCount: document.getElementById('tableCount'),
-    search: document.getElementById('searchInput'),
-    filter: document.getElementById('filterSelect'),
-    countdown: document.getElementById('countdown'),
-    toast: document.getElementById('toast'),
-    toastMsg: document.getElementById('toastMsg'),
-  };
+  let rsvps = [];
+  let events = {};
+  const $ = id => document.getElementById(id);
 
   function showToast(msg){
-    els.toastMsg.textContent = msg;
-    els.toast.classList.add('show');
+    $('toast').textContent = msg;
+    $('toast').classList.add('show');
     clearTimeout(showToast._t);
-    showToast._t = setTimeout(() => els.toast.classList.remove('show'), 2200);
+    showToast._t = setTimeout(() => $('toast').classList.remove('show'), 2200);
   }
+  const fmtTime = iso => new Date(iso).toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  const escapeHtml = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const cityName = c => (events[c] && events[c].name) || c;
 
-  function fmtTime(iso){
-    const d = new Date(iso);
-    return d.toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-  }
-
-  function updateCountdown(){
-    const now = new Date();
-    let diff = EVENT_TIME - now;
-    if (diff <= 0) { els.countdown.textContent = 'Live now'; return; }
-    const d = Math.floor(diff / 86400000); diff -= d*86400000;
-    const h = Math.floor(diff / 3600000); diff -= h*3600000;
-    const m = Math.floor(diff / 60000);
-    els.countdown.textContent = d > 0 ? `${d}d ${h}h ${m}m to go` : `${h}h ${m}m to go`;
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 30000);
-
-  // Auth is the session cookie from /login, sent automatically. An expired
-  // session goes back through the login page. The old password lived in
-  // localStorage — clear it from any browser that still has it.
+  // Same session cookie as the main dashboard, so one login covers both.
   try { localStorage.removeItem('festx_admin_pass'); } catch (e) {}
-
   async function apiFetch(url, opts){
     const resp = await fetch(url, Object.assign({ cache: 'no-store' }, opts));
     if (resp.status === 401) location.replace('/login?next=' + encodeURIComponent(location.pathname));
     return resp;
   }
 
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
+  $('logoutBtn').addEventListener('click', async () => {
     await fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {});
     location.replace('/login');
   });
 
   async function load(){
     try {
-      const resp = await apiFetch('/api/registrations');
-      if (!resp.ok) throw new Error('Failed to load');
-      const rows = await resp.json();
-      registrants = rows.map(r => ({
-        id: r.id,
-        name: r.full_name,
-        email: r.email,
-        phone: r.phone,
-        mode: r.attendance_mode,
-        ticketId: r.ticket_id,
-        registeredAt: r.registered_at,
-      }));
-    } catch(e) {
-      registrants = [];
-      showToast('Could not load registrations');
+      const resp = await apiFetch('/api/rsvps');
+      if (!resp.ok) throw new Error('load failed');
+      const data = await resp.json();
+      rsvps = data.rsvps || [];
+      events = data.events || {};
+    } catch (e) {
+      rsvps = [];
+      showToast('Could not load RSVPs');
     }
+    const filter = $('cityFilter');
+    filter.length = 1;
+    Object.entries(events).forEach(([c, ev]) => filter.add(new Option(ev.name, c)));
     render();
   }
 
-  async function remove(id){
-    await apiFetch('/api/registrations?id=' + encodeURIComponent(id), { method: 'DELETE' });
+  function renderStats(){
+    $('statTotal').textContent = rsvps.length;
+    $('statTotalSub').textContent = rsvps.length ? `${rsvps.length === 1 ? '1 person' : rsvps.length + ' people'} on the list` : 'No RSVPs yet';
+
+    const jhb = events.johannesburg;
+    const cap = jhb ? jhb.capacity : null;
+    const booked = rsvps.filter(r => r.city === 'johannesburg').length;
+    if (cap === null || cap === undefined) {
+      $('statCap').innerHTML = 'No limit';
+      $('capBar').hidden = true;
+      $('statCapSub').textContent = 'Set RSVP_CAPACITY_JOHANNESBURG to cap it';
+    } else {
+      $('statCap').innerHTML = `${booked} <small>/ ${cap}</small>`;
+      $('capBar').hidden = false;
+      $('capFill').style.width = (cap === 0 ? 100 : Math.min(booked / cap * 100, 100)) + '%';
+      $('statCapSub').textContent = booked >= cap ? 'Full — the site shows "Fully booked"' : `${cap - booked} left`;
+    }
+
+    if (rsvps.length) {
+      $('statLast').textContent = rsvps[0].full_name;
+      $('statLastSub').textContent = fmtTime(rsvps[0].created_at);
+    } else {
+      $('statLast').textContent = '—';
+      $('statLastSub').textContent = 'Waiting on the first one';
+    }
+  }
+
+  function visibleRows(){
+    const q = $('searchInput').value.trim().toLowerCase();
+    const c = $('cityFilter').value;
+    return rsvps.filter(r =>
+      (c === 'all' || r.city === c) &&
+      (!q || [r.full_name, r.email, r.phone].some(v => String(v || '').toLowerCase().includes(q)))
+    );
   }
 
   function render(){
-    const q = els.search.value.trim().toLowerCase();
-    const f = els.filter.value;
-    let rows = registrants.filter(r => {
-      const matchesQ = !q || r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q);
-      const matchesF = f === 'all' || r.mode === f;
-      return matchesQ && matchesF;
-    });
+    renderStats();
+    const rows = visibleRows();
+    $('tableCount').textContent = `(${rows.length})`;
 
-    els.total.textContent = registrants.length;
-    els.totalSub.textContent = registrants.length === 0 ? 'No sign-ups yet' : `${registrants.filter(r=>r.mode==='live').length} planning to join live`;
-
-    const remaining = Math.max(CAPACITY - registrants.length, 0);
-    els.seats.innerHTML = `${remaining} <small>/ ${CAPACITY}</small>`;
-    const pct = Math.min((registrants.length / CAPACITY) * 100, 100);
-    els.capFill.style.width = pct + '%';
-
-    if (registrants.length) {
-      const latest = registrants[0];
-      els.last.textContent = latest.name;
-      els.lastSub.textContent = fmtTime(latest.registeredAt);
-    } else {
-      els.last.textContent = '—';
-      els.lastSub.textContent = 'Waiting on your first registrant';
-    }
-
-    els.tableCount.textContent = `(${rows.length})`;
-
-    if (registrants.length === 0) {
-      els.tableWrap.innerHTML = `
-        <div class="empty">
-          <div class="icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7l8 5 8-5M4 7v10a1 1 0 001 1h14a1 1 0 001-1V7M4 7a1 1 0 011-1h14a1 1 0 011 1" stroke="#a39a97" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>No registrants yet</h3>
-          <p>Sign-ups from the funnel page will land here, or add one manually to get started.</p>
-        </div>`;
+    if (!rsvps.length) {
+      $('tableWrap').innerHTML = '<div class="empty"><h3>No RSVPs yet</h3>RSVPs from the Johannesburg form on the site will land here.</div>';
       return;
     }
-
-    if (rows.length === 0) {
-      els.tableWrap.innerHTML = `<div class="empty"><h3>No matches</h3><p>Try a different search or filter.</p></div>`;
+    if (!rows.length) {
+      $('tableWrap').innerHTML = '<div class="empty"><h3>No matches</h3>Try a different search or city.</div>';
       return;
     }
-
-    const rowsHtml = rows.map(r => `
-      <tr>
-        <td class="cell-name">${escapeHtml(r.name)}</td>
-        <td class="cell-email">${escapeHtml(r.email)}</td>
-        <td class="cell-phone">${escapeHtml(r.phone || '—')}</td>
-        <td><span class="tag ${r.mode === 'live' ? 'tag-live' : 'tag-replay'}">${r.mode === 'live' ? 'Live' : 'Replay'}</span></td>
-        <td class="cell-id">${escapeHtml(r.ticketId)}</td>
-        <td class="cell-time">${fmtTime(r.registeredAt)}</td>
-        <td><button class="row-del" data-id="${r.id}" title="Remove">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button></td>
-      </tr>`).join('');
-
-    els.tableWrap.innerHTML = `
+    $('tableWrap').innerHTML = `
       <table>
-        <thead><tr>
-          <th>Name</th><th>Email</th><th>Phone</th><th>Attendance</th><th>Ticket ID</th><th>Registered</th><th></th>
-        </tr></thead>
-        <tbody>${rowsHtml}</tbody>
+        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>RSVP'd</th><th></th></tr></thead>
+        <tbody>${rows.map(r => `
+          <tr>
+            <td class="cell-name">${escapeHtml(r.full_name)}</td>
+            <td class="cell-mono">${escapeHtml(r.email)}</td>
+            <td class="cell-mono">${escapeHtml(r.phone || '—')}</td>
+            <td><span class="tag">${escapeHtml(cityName(r.city))}</span></td>
+            <td class="cell-mono">${fmtTime(r.created_at)}</td>
+            <td><button class="row-del" data-id="${escapeHtml(r.id)}" title="Remove">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button></td>
+          </tr>`).join('')}</tbody>
       </table>`;
 
-    els.tableWrap.querySelectorAll('.row-del').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.getAttribute('data-id');
-        registrants = registrants.filter(r => r.id !== id);
-        render();
-        await remove(id);
-        showToast('Registrant removed');
-      });
-    });
+    $('tableWrap').querySelectorAll('.row-del').forEach(btn => btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const row = rsvps.find(r => String(r.id) === id);
+      if (!row || !confirm(`Remove ${row.full_name}'s RSVP?`)) return;
+      const resp = await apiFetch('/api/rsvps?id=' + encodeURIComponent(id), { method: 'DELETE' });
+      if (!resp.ok) { showToast('Could not remove RSVP'); return; }
+      rsvps = rsvps.filter(r => String(r.id) !== id);
+      render();
+      showToast('RSVP removed');
+    }));
   }
 
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
+  $('searchInput').addEventListener('input', render);
+  $('cityFilter').addEventListener('change', render);
 
-  els.search.addEventListener('input', render);
-  els.filter.addEventListener('change', render);
-
-  document.getElementById('exportBtn').addEventListener('click', () => {
-    if (!registrants.length) { showToast('Nothing to export yet'); return; }
-    const esc = v => {
-      const s = String(v || '');
-      return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-    };
-    const lines = registrants.map(r => {
-      const name = String(r.name || '').trim();
-      const spaceIdx = name.indexOf(' ');
-      const firstName = spaceIdx === -1 ? name : name.slice(0, spaceIdx);
-      const lastName = spaceIdx === -1 ? '' : name.slice(spaceIdx + 1);
-      return [r.email, firstName, lastName].map(esc).join(',');
-    });
-    const blob = new Blob([lines.join('\r\n')], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
+  // Exports what's currently filtered, with a header row — handy as a door list.
+  $('exportBtn').addEventListener('click', () => {
+    const rows = visibleRows();
+    if (!rows.length) { showToast('Nothing to export'); return; }
+    const esc = v => { const s = String(v ?? ''); return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+    const lines = [['Name', 'Email', 'Phone', 'City', 'RSVPd at'].join(',')]
+      .concat(rows.map(r => [r.full_name, r.email, r.phone, cityName(r.city), r.created_at].map(esc).join(',')));
+    const url = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/csv' }));
     const a = document.createElement('a');
-    a.href = url; a.download = 'zoom-registrants.csv';
+    a.href = url;
+    a.download = 'tour-rsvps.csv';
     a.click();
     URL.revokeObjectURL(url);
   });
