@@ -8,6 +8,10 @@ const EVENTS = {
     name: 'Johannesburg',
     capacityEnv: 'RSVP_CAPACITY_JOHANNESBURG',
   },
+  durban: {
+    name: 'Durban',
+    capacityEnv: 'RSVP_CAPACITY_DURBAN',
+  },
 };
 
 // Empty or unset → no limit (null). A whole number → the cap; 0 closes RSVPs.

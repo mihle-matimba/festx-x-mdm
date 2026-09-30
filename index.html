@@ -615,23 +615,23 @@
           <!-- Real start time, pinned to SAST so it's right wherever the viewer is. -->
           <p class="tl-countdown" data-date="2026-09-26T11:00+02:00"></p>
 
-          <div class="tl-rsvp-box" id="rsvp">
-            <form class="rsvp-form" id="rsvpForm" data-city="johannesburg">
+          <div class="tl-rsvp-box">
+            <form class="rsvp-form" data-city="johannesburg">
               <div class="rf-row">
                 <input type="text" name="full_name" placeholder="Full name" aria-label="Full name" autocomplete="name" required>
                 <input type="email" name="email" placeholder="Email address" aria-label="Email address" autocomplete="email" required>
               </div>
               <input type="tel" name="phone" placeholder="Phone number" aria-label="Phone number" autocomplete="tel" required>
               <button type="submit" class="rsvp-submit">RSVP for Johannesburg →</button>
-              <p class="rsvp-msg" id="rsvpMsg" role="status" aria-live="polite"></p>
+              <p class="rsvp-msg" role="status" aria-live="polite"></p>
             </form>
 
-            <div class="rsvp-done" id="rsvpDone" hidden>
-              <h4>You're on the list, <span id="rsvpDoneName">friend</span>.</h4>
+            <div class="rsvp-done" hidden>
+              <h4>You're on the list, <span class="rsvp-done-name">friend</span>.</h4>
               <p>See you on 26 September at 11am at the Apollo Hotel. Save the date.</p>
             </div>
 
-            <div class="rsvp-full" id="rsvpFull" hidden>
+            <div class="rsvp-full" hidden>
               <h4>Johannesburg is fully booked</h4>
               <p>Durban and Cape Town are next.</p>
             </div>
@@ -642,8 +642,31 @@
         <div class="tl-card" style="--city:url('/assets/city-durban.png')">
           <div class="num">STOP 02</div>
           <h3>Durban</h3>
-          <p class="tl-date"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>31 October</p>
-          <p class="tl-countdown" data-date="2026-10-31T00:00"></p>
+          <p class="tl-date"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>31 October · 11am</p>
+          <a class="tl-venue" href="https://www.google.com/maps/search/?api=1&amp;query=Blue%20Waters%20Hotel%20Durban" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg><span>Blue Waters Hotel</span><small>↗</small></a>
+          <p class="tl-countdown" data-date="2026-10-31T11:00+02:00"></p>
+
+          <div class="tl-rsvp-box">
+            <form class="rsvp-form" data-city="durban">
+              <div class="rf-row">
+                <input type="text" name="full_name" placeholder="Full name" aria-label="Full name" autocomplete="name" required>
+                <input type="email" name="email" placeholder="Email address" aria-label="Email address" autocomplete="email" required>
+              </div>
+              <input type="tel" name="phone" placeholder="Phone number" aria-label="Phone number" autocomplete="tel" required>
+              <button type="submit" class="rsvp-submit">RSVP for Durban →</button>
+              <p class="rsvp-msg" role="status" aria-live="polite"></p>
+            </form>
+
+            <div class="rsvp-done" hidden>
+              <h4>You're on the list, <span class="rsvp-done-name">friend</span>.</h4>
+              <p>See you on 31 October at 11am at the Blue Waters Hotel. Save the date.</p>
+            </div>
+
+            <div class="rsvp-full" hidden>
+              <h4>Durban is fully booked</h4>
+              <p>Cape Town is next.</p>
+            </div>
+          </div>
         </div>
       </li>
       <li class="tl-item mdm reveal d2">
@@ -817,53 +840,54 @@
      form's data-city, so another stop only needs the same block in its card
      and an entry in api/_rsvp-events.js. */
   (function(){
-    const form = document.getElementById('rsvpForm');
-    if (!form) return;
-    const city = form.dataset.city;
-    const msg = document.getElementById('rsvpMsg');
-    const done = document.getElementById('rsvpDone');
-    const full = document.getElementById('rsvpFull');
-    const submit = form.querySelector('.rsvp-submit');
+    document.querySelectorAll('.rsvp-form').forEach(form => {
+      const box = form.closest('.tl-rsvp-box');
+      const city = form.dataset.city;
+      const msg = form.querySelector('.rsvp-msg');
+      const done = box.querySelector('.rsvp-done');
+      const full = box.querySelector('.rsvp-full');
+      const submit = form.querySelector('.rsvp-submit');
 
-    function showFull(){
-      form.hidden = true;
-      full.hidden = false;
-    }
-
-    // Best-effort: if this fails the form stays open and the POST re-checks.
-    fetch('/api/rsvp?city=' + encodeURIComponent(city))
-      .then(r => (r.ok ? r.json() : null))
-      .then(d => { if (d && d.full) showFull(); })
-      .catch(() => {});
-
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      msg.textContent = '';
-      const data = Object.fromEntries(new FormData(form));
-      const label = submit.textContent;
-      submit.disabled = true;
-      submit.textContent = 'Saving…';
-      try {
-        const resp = await fetch('/api/rsvp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ city, ...data }),
-        });
-        const body = await resp.json().catch(() => ({}));
-        if (resp.ok) {
-          document.getElementById('rsvpDoneName').textContent = String(body.full_name || data.full_name).split(' ')[0];
-          form.hidden = true;
-          done.hidden = false;
-          return;
-        }
-        if (body.full) { showFull(); return; }
-        msg.textContent = body.error || 'Something went wrong. Please try again.';
-      } catch {
-        msg.textContent = 'Network error — check your connection and try again.';
-      } finally {
-        submit.disabled = false;
-        submit.textContent = label;
+      function showFull(){
+        form.hidden = true;
+        full.hidden = false;
       }
+
+      // Best-effort: if this fails the form stays open and the POST re-checks.
+      fetch('/api/rsvp?city=' + encodeURIComponent(city))
+        .then(r => (r.ok ? r.json() : null))
+        .then(d => { if (d && d.full) showFull(); })
+        .catch(() => {});
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        msg.textContent = '';
+        const data = Object.fromEntries(new FormData(form));
+        const label = submit.textContent;
+        submit.disabled = true;
+        submit.textContent = 'Saving…';
+        try {
+          const resp = await fetch('/api/rsvp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ city, ...data }),
+          });
+          const body = await resp.json().catch(() => ({}));
+          if (resp.ok) {
+            done.querySelector('.rsvp-done-name').textContent = String(body.full_name || data.full_name).split(' ')[0];
+            form.hidden = true;
+            done.hidden = false;
+            return;
+          }
+          if (body.full) { showFull(); return; }
+          msg.textContent = body.error || 'Something went wrong. Please try again.';
+        } catch {
+          msg.textContent = 'Network error — check your connection and try again.';
+        } finally {
+          submit.disabled = false;
+          submit.textContent = label;
+        }
+      });
     });
   })();
 

@@ -42,7 +42,13 @@
   .stat .value{font-size:28px;font-weight:800;line-height:1;}
   .stat .value small{font-size:14px;color:var(--muted);font-weight:600;}
   .stat .sub{margin-top:8px;font-size:12px;color:var(--muted);}
-  .capacity-bar{margin-top:12px;height:7px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;}
+  .cap-list{display:flex;flex-direction:column;gap:12px;margin-top:2px;}
+  .cap-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  .cap-city{font-size:15px;font-weight:700;}
+  .cap-num{font-family:var(--mono);font-size:12.5px;color:var(--muted);}
+  .cap-row.is-full .cap-num{color:var(--red);}
+  .cap-note{margin-top:6px;font-size:11.5px;color:var(--muted);}
+  .capacity-bar{margin-top:8px;height:7px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;}
   .capacity-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--red),var(--violet));transition:width .5s ease;}
 
   .panel{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:18px;overflow:hidden;}
@@ -101,10 +107,8 @@
       <div class="sub" id="statTotalSub">No RSVPs yet</div>
     </div>
     <div class="stat">
-      <div class="label">Johannesburg · 26 Sept · capacity</div>
-      <div class="value" id="statCap">—</div>
-      <div class="capacity-bar" id="capBar" hidden><div class="capacity-fill" id="capFill" style="width:0%"></div></div>
-      <div class="sub" id="statCapSub">Set RSVP_CAPACITY_JOHANNESBURG to cap it</div>
+      <div class="label">Capacity by city</div>
+      <div id="capList" class="cap-list"></div>
     </div>
     <div class="stat">
       <div class="label">Last RSVP</div>
@@ -180,19 +184,23 @@
     $('statTotal').textContent = rsvps.length;
     $('statTotalSub').textContent = rsvps.length ? `${rsvps.length === 1 ? '1 person' : rsvps.length + ' people'} on the list` : 'No RSVPs yet';
 
-    const jhb = events.johannesburg;
-    const cap = jhb ? jhb.capacity : null;
-    const booked = rsvps.filter(r => r.city === 'johannesburg').length;
-    if (cap === null || cap === undefined) {
-      $('statCap').innerHTML = 'No limit';
-      $('capBar').hidden = true;
-      $('statCapSub').textContent = 'Set RSVP_CAPACITY_JOHANNESBURG to cap it';
-    } else {
-      $('statCap').innerHTML = `${booked} <small>/ ${cap}</small>`;
-      $('capBar').hidden = false;
-      $('capFill').style.width = (cap === 0 ? 100 : Math.min(booked / cap * 100, 100)) + '%';
-      $('statCapSub').textContent = booked >= cap ? 'Full — the site shows "Fully booked"' : `${cap - booked} left`;
-    }
+    // One row per city that has RSVPs open, so new stops appear on their own.
+    const cities = Object.keys(events);
+    $('capList').innerHTML = cities.length ? cities.map(c => {
+      const cap = events[c].capacity;
+      const booked = rsvps.filter(r => r.city === c).length;
+      const noLimit = cap === null || cap === undefined;
+      const isFull = !noLimit && booked >= cap;
+      const pct = noLimit ? 0 : (cap === 0 ? 100 : Math.min(booked / cap * 100, 100));
+      return `<div class="cap-row${isFull ? ' is-full' : ''}">
+        <div class="cap-top">
+          <span class="cap-city">${escapeHtml(events[c].name)}</span>
+          <span class="cap-num">${booked}${noLimit ? ' · no limit' : ' / ' + cap}</span>
+        </div>
+        ${noLimit ? '' : `<div class="capacity-bar"><div class="capacity-fill" style="width:${pct}%"></div></div>`}
+        ${isFull ? '<div class="cap-note">Full — the site shows "Fully booked"</div>' : ''}
+      </div>`;
+    }).join('') : '<div class="cap-note">No cities open for RSVPs</div>';
 
     if (rsvps.length) {
       $('statLast').textContent = rsvps[0].full_name;
