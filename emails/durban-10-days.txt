@@ -1,7 +1,7 @@
 Subject: Durban is 10 days away 🔥
 Preview: 31 October · 11am · Blue Waters Hotel. The FestX × MDM tour hits Durban in 10 days.
 
-Hey {{first_name}},
+Hey,
 
 10 days to go. Durban, get ready!
 
@@ -15,7 +15,7 @@ Time:  11am
 Where: Blue Waters Hotel, Durban
 Map:   https://www.google.com/maps/search/?api=1&query=Blue%20Waters%20Hotel%20Durban
 
-Lock in your seat: {{rsvp_url}}
+Lock in your seat: https://www.tradewithfestx.com/
 (Already RSVP'd? You're all set. Just show up ready.)
 
 Bring your people. Tell a friend, a trading partner, anyone who's been thinking about getting serious. Spots are limited and Durban is filling up.
@@ -27,4 +27,3 @@ The FestX × MDM team
 
 tradewithfestx.com · mdmtraders.com
 You're getting this because you signed up with FestX or MDM.
-Unsubscribe: {{unsubscribe_url}}
