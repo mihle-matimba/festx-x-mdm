@@ -1,4 +1,5 @@
 const { EVENTS, capacityFor } = require('./_rsvp-events');
+const { sendRsvpConfirmation } = require('./_rsvp-email');
 
 // Rows already booked for a city, via PostgREST's exact count header.
 async function countFor(base, key, city) {
@@ -93,6 +94,8 @@ module.exports = async function handler(req, res) {
 
   if (resp.ok) {
     const [row] = await resp.json();
+    // The RSVP is already saved, so a failed email never fails the request.
+    await sendRsvpConfirmation({ event, full_name: row.full_name, email: row.email });
     return res.status(201).json({ city: row.city, full_name: row.full_name, email: row.email });
   }
 
