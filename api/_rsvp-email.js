@@ -24,8 +24,26 @@ function render(event, fullName) {
     : '';
 
   const html = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>You're on the list</title></head>
-<body style="margin:0;padding:0;background:#030303;">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark only">
+<meta name="supported-color-schemes" content="dark only"><title>You're on the list</title><style>
+  :root{color-scheme:dark;supported-color-schemes:dark;}
+  body{background:#030303 !important;}
+  @media (prefers-color-scheme:dark){
+    body,.pg{background:#030303 !important;}
+  }
+  /* Outlook.com / Outlook app dark-mode overrides: pin every colour to what we set. */
+  [data-ogsb] body,[data-ogsb] [bgcolor="#030303"]{background-color:#030303 !important;}
+  [data-ogsb] [bgcolor="#14121f"]{background-color:#14121f !important;}
+  [data-ogsb] [style*="background:#0d0b0c"]{background-color:#0d0b0c !important;}
+  [data-ogsc] [style*="color:#f6f3f2"]{color:#f6f3f2 !important;}
+  [data-ogsc] [style*="color:#c9c1be"]{color:#c9c1be !important;}
+  [data-ogsc] [style*="color:#a39a97"]{color:#a39a97 !important;}
+  [data-ogsc] [style*="color:#f2503d"]{color:#f2503d !important;}
+  [data-ogsc] [style*="color:#b096e8"]{color:#b096e8 !important;}
+  [data-ogsc] [style*="color:#ffffff"]{color:#ffffff !important;}
+</style>
+</head>
+<body bgcolor="#030303" style="margin:0;padding:0;background:#030303;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#030303;">${esc(when)} · ${esc(event.venue)}. Your spot for ${esc(event.name)} is confirmed.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#030303" style="background:#030303;">
 <tr><td align="center" style="padding:24px 12px;">
@@ -46,7 +64,7 @@ function render(event, fullName) {
     <p style="margin:0;">Save the details below and tell your people.</p>
   </td></tr>
   <tr><td>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#14121f;border:1px solid rgba(150,120,220,.3);border-radius:18px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#14121f" style="background:#14121f;background-image:linear-gradient(#14121f,#14121f);border:1px solid rgba(150,120,220,.3);border-radius:18px;">
       <tr><td style="padding:22px 26px;">
         <div style="font-family:Consolas,monospace;font-size:12px;font-weight:700;letter-spacing:.14em;color:#b096e8;margin-bottom:12px;">THE DETAILS</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:16px;line-height:1.5;color:#f6f3f2;">
